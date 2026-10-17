@@ -1,0 +1,284 @@
+/* ==========================================================================
+   Le Juriste Pro - Motion Design System & Fluid Interactions
+   Courbes de Bézier : Slow In & Slow Out (Ease-in-out cubique naturel)
+   ========================================================================== */
+
+:root {
+  --primary-bg: #0f172a;
+  --gold-500: #f59e0b;
+  --gold-600: #d97706;
+  --emerald-500: #10b981;
+  --indigo-950: #1e1b4b;
+  
+  /* Courbes de transition cinématique (Slow in / Slow out) */
+  --ease-gentle: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #f8fafc;
+  background-color: #0b0f19;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: radial-gradient(ellipse at top, #1e1b4b 0%, #0f172a 45%, #050811 100%);
+  color: #f1f5f9;
+  overflow-x: hidden;
+}
+
+/* Typographie & En-têtes */
+.font-serif-title {
+  font-family: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+}
+
+/* Glassmorphism avec flou dynamique */
+.glass-header { 
+  background: rgba(15, 23, 42, 0.92); 
+  backdrop-filter: blur(20px); 
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-glow {
+  box-shadow: 0 4px 20px -3px rgba(245, 158, 11, 0.35);
+  transition: box-shadow 0.3s var(--ease-gentle), transform 0.3s var(--ease-gentle);
+}
+
+.gold-glow:hover {
+  box-shadow: 0 8px 30px -4px rgba(245, 158, 11, 0.55);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   TRANSITIONS D'ÉCRANS NATURELLES (Page Transitions)
+   ========================================================================== */
+
+@keyframes screenFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.screen-animate {
+  animation: screenFadeInUp 0.35s var(--ease-spring) forwards;
+  will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   MICRO-INTERACTIONS SUR LES BOUTONS ET COMPOSANTS INTERACTIFS
+   ========================================================================== */
+
+button, a, .interactive-card {
+  transition: transform 0.22s var(--ease-spring), 
+              box-shadow 0.22s var(--ease-gentle), 
+              background-color 0.2s var(--ease-gentle), 
+              border-color 0.2s var(--ease-gentle);
+}
+
+button:active, a:active {
+  transform: scale(0.97) !important;
+}
+
+/* Cartes des matières et modules */
+.group:hover .group-hover\:translate-x-1 {
+  transform: translateX(4px);
+  transition: transform 0.25s var(--ease-spring);
+}
+
+/* ==========================================================================
+   OPTIONS DU QCM & EFFETS DE RÉPONSE
+   ========================================================================== */
+
+@keyframes optionSelectPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}
+
+@keyframes correctBadgePop {
+  0% { transform: scale(0.85); opacity: 0; }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.qcm-option-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.95rem 1.25rem;
+  border-radius: 1rem;
+  border: 2px solid #e2e8f0;
+  background-color: #f8fafc;
+  color: #1e293b;
+  cursor: pointer;
+  transition: transform 0.24s var(--ease-spring),
+              border-color 0.24s var(--ease-gentle),
+              background-color 0.24s var(--ease-gentle),
+              box-shadow 0.24s var(--ease-gentle);
+  user-select: none;
+}
+
+.qcm-option-card:hover:not(.locked) {
+  border-color: #f59e0b;
+  background-color: #fffbeb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -4px rgba(245, 158, 11, 0.18);
+}
+
+.qcm-option-card:active:not(.locked) {
+  transform: scale(0.985);
+}
+
+.qcm-option-card.selected {
+  border-color: #f59e0b;
+  background-color: #fef3c7;
+  box-shadow: 0 4px 14px -3px rgba(245, 158, 11, 0.25);
+  animation: optionSelectPulse 0.3s var(--ease-spring);
+}
+
+.qcm-option-card.correct {
+  border-color: #10b981 !important;
+  background-color: #ecfdf5 !important;
+  color: #064e3b !important;
+  box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.qcm-option-card.correct .check-indicator {
+  animation: correctBadgePop 0.35s var(--ease-spring);
+}
+
+.qcm-option-card.incorrect {
+  border-color: #f43f5e !important;
+  background-color: #fff1f2 !important;
+  color: #881337 !important;
+  box-shadow: 0 6px 18px -4px rgba(244, 63, 94, 0.25) !important;
+}
+
+.qcm-option-card.dimmed {
+  opacity: 0.5;
+  border-color: #e2e8f0;
+  transform: none !important;
+}
+
+/* Indicateur circulaire radio/check */
+.check-indicator {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.25s var(--ease-spring);
+}
+
+.qcm-option-card.selected .check-indicator {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+  color: #020617;
+  transform: scale(1.08);
+}
+
+.qcm-option-card.correct .check-indicator {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+  transform: scale(1.12);
+}
+
+.qcm-option-card.incorrect .check-indicator {
+  background-color: #f43f5e;
+  border-color: #f43f5e;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   ANIMATION DE LA BOÎTE D'EXPLICATION JURIDIQUE
+   ========================================================================== */
+
+@keyframes correctionSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.correction-animate {
+  animation: correctionSlideDown 0.35s var(--ease-spring) forwards;
+}
+
+/* ==========================================================================
+   ANIMATION DE CHARGEMENT DISCRÈTE ET MODERNE (Global Top Loader Bar)
+   ========================================================================== */
+
+#global-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24, #10b981);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+  z-index: 9999;
+  transition: width 0.28s var(--ease-spring), opacity 0.3s var(--ease-gentle);
+  pointer-events: none;
+}
+
+/* Pulsation douce */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.94; transform: scale(1.015); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s var(--ease-gentle) infinite;
+}
+
+/* Scrollbar fluide */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+.custom-scrollbar::-webkit-scrollbar-thumb { 
+  background: #475569; 
+  border-radius: 9999px; 
+  transition: background 0.2s var(--ease-gentle);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #f59e0b; }

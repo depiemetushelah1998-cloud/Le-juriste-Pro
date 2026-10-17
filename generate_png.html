@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Générateur Instantané d'Icônes PNG - Le Juriste Pro</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .container {
+            background: #1e293b;
+            border: 1px solid #f59e0b;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 650px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #fbbf24;
+            margin-top: 0;
+            font-size: 24px;
+        }
+        p {
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .canvas-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        canvas {
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+        button {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #020617;
+            border: none;
+            padding: 10px 18px;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
+        }
+        .badge-success {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid #10b981;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="badge-success">⚖️ Prêt pour Netlify & PWA Builder</div>
+    <h1>Téléchargement des Icônes Officielles PNG</h1>
+    <p>Cliquez sur chaque bouton ci-dessous pour télécharger directement <strong>icon-192.png</strong> et <strong>icon-512.png</strong> dans votre dossier de projet.</p>
+
+    <div class="canvas-grid">
+        <div class="card">
+            <span style="font-size: 12px; font-weight: bold; color: #94a3b8;">192 × 192 pixels</span>
+            <canvas id="c192" width="192" height="192"></canvas>
+            <button onclick="downloadPng('c192', 'icon-192.png')">📥 Télécharger icon-192.png</button>
+        </div>
+
+        <div class="card">
+            <span style="font-size: 12px; font-weight: bold; color: #94a3b8;">512 × 512 pixels</span>
+            <canvas id="c512" width="512" height="512" style="width: 192px; height: 192px;"></canvas>
+            <button onclick="downloadPng('c512', 'icon-512.png')">📥 Télécharger icon-512.png</button>
+        </div>
+    </div>
+
+    <p style="font-size: 12px; color: #64748b;">
+        Placez les 2 fichiers téléchargés directement à la racine de votre dossier :<br>
+        <code>C:\Users\ETOILE DEPIE\Desktop\Projet application\</code>
+    </p>
+</div>
+
+<script>
+function draw(canvasId, size) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, size, size);
+  bg.addColorStop(0, '#1e1b4b');
+  bg.addColorStop(0.5, '#0f172a');
+  bg.addColorStop(1, '#020617');
+  
+  // Rounded rect
+  const r = size * 0.2;
+  ctx.beginPath();
+  ctx.moveTo(r, 0);
+  ctx.arcTo(size, 0, size, size, r);
+  ctx.arcTo(size, size, 0, size, r);
+  ctx.arcTo(0, size, 0, 0, r);
+  ctx.arcTo(0, 0, size, 0, r);
+  ctx.closePath();
+  ctx.fillStyle = bg;
+  ctx.fill();
+
+  // Gold stroke border
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = Math.max(2, size * 0.015);
+  ctx.stroke();
+
+  // Scale for drawing
+  const s = size / 512;
+
+  // Gold gradient
+  const gold = ctx.createLinearGradient(0, 0, size, size);
+  gold.addColorStop(0, '#fef08a');
+  gold.addColorStop(0.5, '#f59e0b');
+  gold.addColorStop(1, '#b45309');
+  ctx.fillStyle = gold;
+  ctx.strokeStyle = gold;
+  ctx.lineCap = 'round';
+
+  // Balance vertical column
+  ctx.beginPath();
+  ctx.lineWidth = 12 * s;
+  ctx.moveTo(256 * s, 90 * s);
+  ctx.lineTo(256 * s, 360 * s);
+  ctx.stroke();
+
+  // Top ball
+  ctx.beginPath();
+  ctx.arc(256 * s, 90 * s, 16 * s, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Beam
+  ctx.beginPath();
+  ctx.lineWidth = 10 * s;
+  ctx.moveTo(140 * s, 140 * s);
+  ctx.lineTo(372 * s, 140 * s);
+  ctx.stroke();
+
+  // Left strings & plate
+  ctx.beginPath();
+  ctx.lineWidth = 4 * s;
+  ctx.moveTo(140 * s, 140 * s); ctx.lineTo(100 * s, 240 * s);
+  ctx.moveTo(140 * s, 140 * s); ctx.lineTo(180 * s, 240 * s);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(90 * s, 240 * s);
+  ctx.quadraticCurveTo(140 * s, 280 * s, 190 * s, 240 * s);
+  ctx.closePath();
+  ctx.fill();
+
+  // Right strings & plate
+  ctx.beginPath();
+  ctx.lineWidth = 4 * s;
+  ctx.moveTo(372 * s, 140 * s); ctx.lineTo(332 * s, 240 * s);
+  ctx.moveTo(372 * s, 140 * s); ctx.lineTo(412 * s, 240 * s);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(322 * s, 240 * s);
+  ctx.quadraticCurveTo(372 * s, 280 * s, 422 * s, 240 * s);
+  ctx.closePath();
+  ctx.fill();
+
+  // Law book
+  ctx.beginPath();
+  ctx.moveTo(160 * s, 360 * s);
+  ctx.lineTo(256 * s, 380 * s);
+  ctx.lineTo(352 * s, 360 * s);
+  ctx.lineTo(360 * s, 410 * s);
+  ctx.lineTo(256 * s, 430 * s);
+  ctx.lineTo(152 * s, 410 * s);
+  ctx.closePath();
+  ctx.fill();
+
+  // Text
+  ctx.font = `900 ${Math.round(28 * s)}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fbbf24';
+  ctx.fillText('LE JURISTE PRO', 256 * s, 475 * s);
+}
+
+function downloadPng(canvasId, filename) {
+  const canvas = document.getElementById(canvasId);
+  const a = document.createElement('a');
+  a.download = filename;
+  a.href = canvas.toDataURL('image/png');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+draw('c192', 192);
+draw('c512', 512);
+</script>
+</body>
+</html>

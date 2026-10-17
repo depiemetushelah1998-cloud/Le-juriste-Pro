@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Le Juriste Pro - Application mobile 100% gratuite de préparation à la phase de présélection au concours de la magistrature en Côte d'Ivoire et de renforcement de la culture juridique.">
+    <title>Le Juriste Pro - Magistrature INFJ CI & Culture Juridique</title>
+    
+    <!-- Polices Web Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icônes FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS pour la mise en page fluide -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Manifest PWA & Icônes -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="theme-color" content="#f59e0b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Le Juriste Pro">
+    
+    <!-- Feuille de styles locale autonome (Mode Hors-ligne) -->
+    <link rel="stylesheet" href="style.css">
+    
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration error:', err));
+        });
+      }
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col relative select-none">
+
+    <!-- Barre de Progression & Chargement Dynamique Discrète -->
+    <div id="global-progress-bar"></div>
+
+    <!-- En-tête Compact et Épuré -->
+    <header class="glass-header text-white border-b border-slate-800/80 transition-all duration-200">
+        <div class="max-w-7xl mx-auto px-3 py-1.5 flex items-center justify-between gap-2">
+            
+            <!-- Logo & Titre Principal Compact -->
+            <div class="flex items-center space-x-2.5 cursor-pointer group" onclick="switchTab('dashboard')">
+                <div class="relative w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 via-amber-400 to-amber-200 flex items-center justify-center font-bold text-slate-950 text-base shadow-sm group-hover:scale-105 transition-transform shrink-0">
+                    <svg class="w-5 h-5 text-slate-950 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2a1 1 0 0 1 1 1v2.07c3.61.45 6.44 3.39 6.93 7.03h2.07a1 1 0 1 1 0 2h-2.07c-.49 3.64-3.32 6.58-6.93 7.03V21a1 1 0 1 1-2 0v-1.87c-3.61-.45-6.44-3.39-6.93-7.03H2a1 1 0 1 1 0-2h2.07C4.56 8.46 7.39 5.52 11 5.07V3a1 1 0 0 1 1-1zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+                    </svg>
+                </div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-sm md:text-base font-bold font-serif-title tracking-wide flex items-center gap-1.5">
+                        <span>Le Juriste Pro</span>
+                        <span class="text-[10px] font-sans bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded-md font-extrabold uppercase">
+                            INFJ CI
+                        </span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Liens de navigation Rapide Compacts -->
+            <nav class="hidden md:flex items-center space-x-1 text-xs">
+                <button onclick="switchTab('dashboard')" class="px-2.5 py-1 rounded-lg hover:bg-slate-800 hover:text-amber-300 transition font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-house"></i> Accueil
+                </button>
+                <button onclick="switchTab('fiches')" class="px-2.5 py-1 rounded-lg hover:bg-slate-800 hover:text-amber-300 transition font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-book-bookmark text-amber-400"></i> Fiches
+                </button>
+                <button onclick="switchTab('codes')" class="px-2.5 py-1 rounded-lg hover:bg-slate-800 hover:text-emerald-300 transition font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-scale-balanced text-emerald-400"></i> Loi d'ici
+                </button>
+                <button onclick="switchTab('community')" class="px-2.5 py-1 rounded-lg hover:bg-slate-800 hover:text-blue-300 transition font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-comments text-blue-400"></i> Entraide
+                </button>
+                <button onclick="switchTab('author')" class="px-2.5 py-1 rounded-lg hover:bg-slate-800 hover:text-amber-300 transition font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-user-tie text-amber-400"></i> Concepteur
+                </button>
+            </nav>
+
+            <!-- Actions Principales Compactes -->
+            <div class="flex items-center space-x-1.5">
+                <!-- Zone Utilisateur / Auth Supabase -->
+                <div id="auth-header-container" class="flex items-center">
+                    <button id="btn-open-auth" onclick="openAuthModal('login')" class="text-[11px] bg-indigo-900/80 hover:bg-indigo-800 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-amber-500/30 transition shadow-sm flex items-center space-x-1">
+                        <i class="fa-solid fa-user-lock text-[10px]"></i>
+                        <span>Connexion</span>
+                    </button>
+                    <div id="user-logged-box" class="hidden items-center space-x-2">
+                        <span id="user-display-email" class="text-[10px] text-amber-300/90 font-mono hidden sm:inline-block max-w-[120px] truncate"></span>
+                        <span id="user-sub-badge" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">Gratuit</span>
+                        <button onclick="handleSignOut()" class="text-[10px] bg-slate-800 hover:bg-rose-900/40 text-slate-300 hover:text-rose-300 px-2 py-1 rounded-lg border border-slate-700 transition" title="Déconnexion">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="openModal('modal-donate')" class="text-[11px] bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold px-2.5 py-1 rounded-lg transition shadow-sm flex items-center space-x-1">
+                    <i class="fa-solid fa-heart text-rose-950 text-[10px]"></i>
+                    <span>Don</span>
+                </button>
+
+                <button onclick="switchTab('author')" class="md:hidden text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2 py-1 rounded-lg transition" title="Concepteur">
+                    <i class="fa-solid fa-user-tie text-amber-400 text-xs"></i>
+                </button>
+
+                <button onclick="switchTab('dashboard')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-lg transition" title="Tableau de bord">
+                    <i class="fa-solid fa-house text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Citation Spirituelle Compacte -->
+    <div class="bg-gradient-to-r from-amber-500/10 via-indigo-950/30 to-amber-500/10 border-b border-amber-500/20 py-1 px-3 text-center">
+        <p class="text-[11px] md:text-xs text-amber-300/90 font-medium tracking-wide italic flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-cross text-amber-400/80 text-[10px]"></i>
+            <span>« Tout est possible à celui qui croit »</span>
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest not-italic">— Marc 9:23</span>
+        </p>
+    </div>
+
+    <!-- Conteneur Principal -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-3 md:p-4 grid grid-cols-1 gap-4">
+
+        <!-- Bannière d'en-tête & Gratuité Absolue -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 border border-amber-500/30 p-6 md:p-8 text-white shadow-2xl">
+            <div class="absolute -right-8 -bottom-10 opacity-10 pointer-events-none">
+                <i class="fa-solid fa-scale-unbalanced-flip text-[220px] text-amber-400"></i>
+            </div>
+
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="space-y-3 max-w-3xl">
+                    <div class="inline-flex items-center space-x-2 bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 rounded-full text-xs font-bold text-emerald-300">
+                        <i class="fa-solid fa-lock-open text-emerald-400"></i>
+                        <span>APPLICATION 100% GRATUITE • AUCUN ABONNEMENT • ZÉRO PAYWALL</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold font-serif-title text-slate-100">
+                        Le Juriste Pro — <span class="gold-gradient-text">Excellence & Démocratisation Juridique</span>
+                    </h2>
+                    <p class="text-xs md:text-sm text-slate-300 leading-relaxed">
+                        Plateforme dédiée à la préparation rigoureuse de la phase de présélection au concours de la magistrature en Côte d'Ivoire (INFJ) et au renforcement de la culture juridique. Paliers progressifs de 50 QCM, compte à rebours réflexe de 45 secondes et explications juridiques détaillées fondées sur les textes en vigueur.
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto self-end md:self-center">
+                    <button onclick="openModal('modal-donate')" class="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-extrabold text-xs px-5 py-3 rounded-2xl shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 whitespace-nowrap">
+                        <i class="fa-solid fa-hand-holding-dollar text-slate-950 text-base"></i>
+                        <span>Soutenir le Projet (Don Libre)</span>
+                    </button>
+                    <a href="https://wa.me/2250757846227" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-3 rounded-2xl transition flex items-center justify-center space-x-2 whitespace-nowrap shadow-md">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>Échanger sur WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 3 PUBLICS CIBLES ==================== -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
+                <div class="space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Étudiants aux Ressources Limitées</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Conçu pour celles et ceux qui n'ont pas les moyens financiers d'intégrer des prépas privées coûteuses. Accédez à une préparation d'élite <strong>100% libre et gratuite</strong>.
+                    </p>
+                </div>
+                <span class="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
+                    <i class="fa-solid fa-check"></i> Égalité des chances
+                </span>
+            </div>
+
+            <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
+                <div class="space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Travailleurs & Professionnels</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Pour les professionnels en activité aux contraintes horaires fortes. Entraînez-vous à votre rythme, en soirée ou le week-end, par paliers modulables de 50 QCM.
+                    </p>
+                </div>
+                <span class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
+                    <i class="fa-solid fa-clock"></i> Flexibilité totale 24h/24
+                </span>
+            </div>
+
+            <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
+                <div class="space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-scale-unbalanced"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Étudiants en Droit (L1 à M2)</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Pour tous les juristes universitaires désireux d'évaluer leurs réflexes, de réviser leurs cours fondamentaux et de consolider une culture juridique solide.
+                    </p>
+                </div>
+                <span class="text-[11px] font-bold text-indigo-300 flex items-center gap-1">
+                    <i class="fa-solid fa-brain"></i> Culture juridique d'excellence
+                </span>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 1 : DASHBOARD ==================== -->
+        <section id="screen-dashboard" class="space-y-6">
+
+            <!-- Rappel non-intrusif : Soutenir le projet libre & gratuit -->
+            <div id="banner-support-reminder" class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-amber-950/20 to-slate-900 border border-amber-500/30 p-3.5 sm:p-4 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-3.5">
+                <div class="flex items-start sm:items-center space-x-3 text-left">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h4 class="text-xs sm:text-sm font-bold text-amber-300 font-serif-title">Soutenez « Le Juriste Pro »</h4>
+                            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wider">Don Volontaire Libre</span>
+                        </div>
+                        <p class="text-[11px] sm:text-xs text-slate-300 mt-0.5 leading-relaxed">
+                            Aidez-nous à préserver la gratuité de la plateforme pour tous les candidats et étudiants.
+                            Don libre par <strong>Wave / Orange Money / Moov Money</strong> au :
+                            <span class="font-mono font-bold text-amber-300">07 57 84 62 27</span> / <span class="font-mono font-bold text-amber-300">01 41 76 84 14</span>.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 w-full md:w-auto shrink-0 self-end md:self-center">
+                    <button onclick="openModal('modal-donate')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl transition shadow flex items-center space-x-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-heart text-rose-950 text-[11px]"></i>
+                        <span>Faire un Don</span>
+                    </button>
+                    <button onclick="dismissSupportReminder()" class="text-slate-400 hover:text-slate-200 text-xs px-2.5 py-2 rounded-xl border border-slate-800 hover:bg-slate-800 transition" title="Masquer temporairement">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Rappels de révision programmés -->
+            <div class="bg-gradient-to-r from-slate-800/90 via-indigo-950/70 to-slate-800/90 p-4 rounded-2xl border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+                <div class="flex items-center space-x-3 text-left">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                            <span>Programmer mon Rappel Quotidien de Révision</span>
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">NOUVEAU</span>
+                        </h4>
+                        <p class="text-xs text-slate-400">Recevez une notification sur votre appareil pour garder une discipline d'entraînement régulière.</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <input type="time" id="input-reminder-time" value="20:00" class="bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <button onclick="scheduleReminder()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow flex items-center space-x-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Activer Rappel</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Configuration du Chronomètre par Question -->
+            <div class="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Chronomètre par Question (Mode Réflexe)</h4>
+                        <p class="text-xs text-slate-400">Temps imparti pour répondre à chaque QCM</p>
+                    </div>
+                </div>
+                <div class="flex items-center bg-slate-900 p-1.5 rounded-xl border border-slate-700 flex-wrap gap-1">
+                    <button id="timer-opt-45" onclick="setTimerSetting(45)" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition bg-amber-500 text-slate-950 shadow">
+                        <i class="fa-solid fa-bolt mr-1"></i> 45 Secs
+                    </button>
+                    <button id="timer-opt-30" onclick="setTimerSetting(30)" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition">
+                        <i class="fa-solid fa-clock mr-1"></i> 30 Secs
+                    </button>
+                    <button id="timer-opt-10" onclick="setTimerSetting(10)" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> 10 Secs
+                    </button>
+                    <button id="timer-opt-0" onclick="setTimerSetting(0)" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition">
+                        <i class="fa-solid fa-infinity mr-1"></i> Illimité
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistiques Persistantes -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 flex items-center space-x-3 shadow-md">
+                    <div class="p-3 bg-blue-500/20 text-blue-400 rounded-xl border border-blue-500/30"><i class="fa-solid fa-database text-xl"></i></div>
+                    <div>
+                        <div class="text-2xl font-black text-white">20 000</div>
+                        <div class="text-xs text-slate-400 font-medium">Base de QCM</div>
+                    </div>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 flex items-center space-x-3 shadow-md">
+                    <div class="p-3 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30"><i class="fa-solid fa-bullseye text-xl"></i></div>
+                    <div>
+                        <div class="text-2xl font-black text-emerald-400" id="stat-answered-display">0/0 (0%)</div>
+                        <div class="text-xs text-slate-400 font-medium">Précision Globale</div>
+                    </div>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 flex items-center space-x-3 shadow-md">
+                    <div class="p-3 bg-amber-500/20 text-amber-400 rounded-xl border border-amber-500/30"><i class="fa-solid fa-gavel text-xl"></i></div>
+                    <div>
+                        <div class="text-2xl font-black text-white">6</div>
+                        <div class="text-xs text-slate-400 font-medium">Matières Clés</div>
+                    </div>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 flex items-center space-x-3 shadow-md">
+                    <div class="p-3 bg-purple-500/20 text-purple-400 rounded-xl border border-purple-500/30"><i class="fa-solid fa-bolt text-xl"></i></div>
+                    <div>
+                        <div class="text-2xl font-black text-amber-400" id="stat-timer-display">45 Secs</div>
+                        <div class="text-xs text-slate-400 font-medium">Compteur Réflexe</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modes Général & Examen -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 text-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-indigo-100 text-indigo-900 text-xs font-bold px-3 py-1 rounded-full border border-indigo-200">
+                                Révision Transversale
+                            </span>
+                            <i class="fa-solid fa-book-open text-indigo-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold font-serif-title text-slate-900 mb-2">Entraînement Mixte (60 QCM)</h2>
+                        <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                            Série mixte tirée des 6 matières avec votre compteur fixé à <span id="lbl-timer-setting-desc" class="font-bold text-amber-600">45 secondes</span> par question.
+                        </p>
+                    </div>
+                    <button onclick="startTraining()" class="w-full bg-indigo-950 hover:bg-indigo-900 text-amber-300 font-bold py-3.5 px-4 rounded-2xl transition flex items-center justify-center space-x-2 shadow-lg group">
+                        <i class="fa-solid fa-play group-hover:translate-x-1 transition-transform"></i>
+                        <span>Démarrer Entraînement Mixte</span>
+                    </button>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-6 md:p-8 rounded-3xl shadow-xl border border-amber-500/30 text-white flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-amber-500/20 text-amber-300 text-xs font-extrabold px-3 py-1 rounded-full border border-amber-500/40">
+                                Épreuve Officielle
+                            </span>
+                            <i class="fa-solid fa-stopwatch text-amber-400 text-2xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold font-serif-title text-amber-100 mb-2">Examen Blanc (100 QCM)</h2>
+                        <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                            Simulation réelle de 2 heures avec 100 questions calibrées selon les quotas officiels de l'INFJ.
+                        </p>
+                    </div>
+                    <button onclick="startExam()" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-3.5 px-4 rounded-2xl transition flex items-center justify-center space-x-2 shadow-xl gold-glow">
+                        <i class="fa-solid fa-bolt text-slate-950"></i>
+                        <span>Lancer l'Examen Blanc (2h00)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Accès Direct aux Nouvelles Sections -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div onclick="switchTab('fiches')" class="bg-gradient-to-br from-slate-800 to-indigo-950 p-5 rounded-2xl border border-amber-500/30 hover:border-amber-400 cursor-pointer transition shadow-md group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base font-serif-title mb-1">Fiches de Synthèse Gratuites</h4>
+                    <p class="text-xs text-slate-300">Régimes juridiques clés résumés : divorce 2022, garde à vue, OHADA, REP.</p>
+                </div>
+
+                <div onclick="switchTab('codes')" class="bg-gradient-to-br from-slate-800 to-slate-900 p-5 rounded-2xl border border-emerald-500/30 hover:border-emerald-400 cursor-pointer transition shadow-md group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base font-serif-title mb-1">Textes & Codes « Loi d'ici »</h4>
+                    <p class="text-xs text-slate-300">Accès direct aux codes ivoiriens et traités OHADA via la plateforme officielle.</p>
+                </div>
+
+                <div onclick="switchTab('community')" class="bg-gradient-to-br from-slate-800 to-indigo-950 p-5 rounded-2xl border border-blue-500/30 hover:border-blue-400 cursor-pointer transition shadow-md group sm:col-span-2 lg:col-span-1">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base font-serif-title mb-1">Forum d'Entraide Communautaire</h4>
+                    <p class="text-xs text-slate-300">Espace d'échange et de discussion entre candidats et étudiants en droit.</p>
+                </div>
+            </div>
+
+            <!-- Liste des Matières avec système de niveaux 50 QCM -->
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 text-slate-800">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                    <h3 class="text-lg font-bold font-serif-title text-slate-900 flex items-center">
+                        <i class="fa-solid fa-scale-balanced text-amber-600 mr-2"></i>
+                        Paliers par Matière (50 Questions par Niveau)
+                    </h3>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-bold self-start sm:self-auto">Cliquez sur une matière pour vous entraîner</span>
+                </div>
+                <div class="space-y-4" id="modules-matrix">
+                    <!-- Rendu dynamique via app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 2 : SESSION DE QUIZ ==================== -->
+        <section id="screen-quiz" class="hidden space-y-3">
+            <!-- Barre d'état QCM compacte sur une seule ligne avec commandes vocales -->
+            <div class="bg-slate-800/90 px-3.5 py-2 rounded-xl border border-slate-700/80 flex flex-wrap items-center justify-between gap-2 shadow-md">
+                <div class="flex items-center space-x-2">
+                    <span id="quiz-module-badge" class="bg-amber-500/20 text-amber-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-amber-500/40">
+                        Matière
+                    </span>
+                    <span id="quiz-level-badge" class="bg-indigo-600/30 text-indigo-200 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border border-indigo-500/40">
+                        Niveau 1 (50 QCM)
+                    </span>
+                </div>
+
+                <!-- Commandes Vocales Interactives Ultra-Rapides -->
+                <div class="flex items-center space-x-1.5 bg-slate-900/90 px-2 py-1 rounded-lg border border-slate-700">
+                    <!-- Synthèse Vocale (TTS) -->
+                    <button id="btn-voice-speak" onclick="toggleAutoSpeech()" class="text-xs px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition flex items-center gap-1.5" title="Lecture audio de la question">
+                        <i id="voice-speak-icon" class="fa-solid fa-volume-high text-amber-400"></i>
+                        <span id="voice-speak-label" class="text-[10px] hidden sm:inline">Audio Auto : ON</span>
+                    </button>
+                    <!-- Reconnaissance Vocale (STT) -->
+                    <button id="btn-voice-listen" onclick="toggleVoiceRecognition()" class="text-xs px-2.5 py-1 rounded-md bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow" title="Activer la réponse et validation vocale">
+                        <i id="voice-listen-icon" class="fa-solid fa-microphone"></i>
+                        <span id="voice-listen-label" class="text-[10px]">Micro : Actif</span>
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <!-- Compteur Dynamique Compact -->
+                    <div id="quiz-timer" class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-bolt text-amber-400 text-[11px]" id="timer-icon"></i>
+                        <span id="timer-display">45s</span>
+                    </div>
+                    <div class="text-xs font-semibold text-slate-300">
+                        Q. <span id="current-q-num" class="text-amber-400 font-bold">1</span> / <span id="total-q-num">50</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicateur Flottant de Reconnaissance Vocale / Synthèse en temps réel -->
+            <div id="voice-status-banner" class="hidden bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 border border-amber-500/40 rounded-xl px-3.5 py-2 text-xs flex items-center justify-between gap-2 shadow-inner">
+                <div class="flex items-center space-x-2 text-slate-200 truncate">
+                    <span id="voice-wave-pulse" class="flex h-2.5 w-2.5 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                    </span>
+                    <span id="voice-status-text" class="text-[11px] font-medium text-amber-300 truncate">
+                        À l'écoute... Dites « Option A », « Réponse B » ou « Valider »
+                    </span>
+                </div>
+                <button onclick="readCurrentQuestionSpeech()" class="text-[10px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800 transition shrink-0" title="Répéter la question">
+                    <i class="fa-solid fa-rotate-right mr-1"></i>Répéter
+                </button>
+            </div>
+
+            <!-- Conteneur Question Compact -->
+            <div class="bg-white p-4 md:p-6 rounded-2xl shadow-xl border border-slate-200 text-slate-900">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-[11px] font-extrabold text-indigo-900 uppercase tracking-wider" id="quiz-subdomain">
+                        Sous-Domaine Juridique
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="readCurrentQuestionSpeech()" class="text-[11px] text-amber-700 hover:text-amber-800 font-medium flex items-center space-x-1 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200 transition" title="Écouter la question">
+                            <i class="fa-solid fa-volume-high text-amber-600"></i>
+                            <span>Lire</span>
+                        </button>
+                        <button onclick="openReportModal()" class="text-[11px] text-rose-600 hover:text-rose-700 font-medium flex items-center space-x-1 bg-rose-50 px-2.5 py-0.5 rounded-lg border border-rose-200 transition">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>Signaler</span>
+                        </button>
+                    </div>
+                </div>
+
+                <h2 id="quiz-question-text" class="text-base md:text-lg font-bold font-serif-title text-slate-900 mb-4 leading-snug">
+                    Chargement de la question...
+                </h2>
+
+                <div id="quiz-options-container" class="space-y-3">
+                    <!-- Injecté dynamiquement -->
+                </div>
+
+                <div id="correction-box" class="hidden mt-6 p-5 rounded-2xl border">
+                    <!-- Explications légales et jurisprudence -->
+                </div>
+
+                <div class="mt-8 flex items-center justify-between border-t border-slate-200 pt-4">
+                    <button id="btn-validate" onclick="validateAnswer()" class="bg-indigo-950 hover:bg-indigo-900 text-amber-300 font-bold px-8 py-3 rounded-2xl transition shadow-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Valider la réponse</span>
+                        <span class="text-[10px] text-amber-400/80 font-normal ml-1 hidden sm:inline">(ou dites « Valider »)</span>
+                    </button>
+                    <button id="btn-next" onclick="nextQuestion()" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black px-8 py-3 rounded-2xl transition shadow-xl flex items-center space-x-2 gold-glow">
+                        <span>Question suivante</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <span class="text-[10px] text-slate-900/80 font-semibold ml-1 hidden sm:inline">(ou dites « Suivant »)</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 4 : FICHES DE SYNTHÈSE ==================== -->
+        <section id="screen-fiches" class="hidden space-y-6">
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 text-slate-900">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold font-serif-title text-slate-900">Fiches de Synthèse Gratuites</h3>
+                        <p class="text-xs md:text-sm text-slate-500">Résumés doctrinaux et légaux des points névralgiques du concours et des examens universitaires.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6" id="fiches-container">
+                    <!-- Injecté en JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 5 : LOI D'ICI ==================== -->
+        <section id="screen-codes" class="hidden space-y-6">
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 text-slate-900">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold font-serif-title text-slate-900">Accès Direct aux Textes Juridiques — « Loi d'ici »</h3>
+                        <p class="text-xs md:text-sm text-slate-500">Consultez directement les textes légaux ivoiriens et les Actes Uniformes OHADA en texte intégral.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6" id="loi-dici-container">
+                    <!-- Injecté en JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 6 : FORUM D'ENTRAIDE ==================== -->
+        <section id="screen-community" class="hidden space-y-6">
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 text-slate-900">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold font-serif-title text-slate-900">Forum Communautaire & Entraide Juridique</h3>
+                            <p class="text-xs md:text-sm text-slate-500">Partagez vos interrogations, astuces de révision et points de droit complexes.</p>
+                        </div>
+                    </div>
+                    <button onclick="openModal('modal-community-new')" class="bg-indigo-950 hover:bg-indigo-900 text-amber-300 font-bold px-4 py-2.5 rounded-xl text-xs transition shadow flex items-center space-x-2 self-start sm:self-auto">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>Poser une question</span>
+                    </button>
+                </div>
+                <div class="space-y-4" id="community-posts-container">
+                    <!-- Injecté en JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 7 : PROFIL CONCEPTEUR ==================== -->
+        <section id="screen-author" class="hidden space-y-6">
+            <!-- Carte Identité du Développeur (Sans photo) -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 md:p-8 rounded-3xl shadow-2xl border border-amber-500/30 relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-6">
+                    <!-- Monogramme / Emblème officiel au lieu d'une photo -->
+                    <div class="w-28 h-28 md:w-32 md:h-32 rounded-3xl bg-gradient-to-tr from-amber-500 via-amber-400 to-amber-200 text-slate-950 flex flex-col items-center justify-center font-extrabold text-3xl shadow-2xl border-4 border-amber-400/50 shrink-0">
+                        <i class="fa-solid fa-scale-balanced text-3xl mb-1 text-slate-950"></i>
+                        <span class="text-xs font-black tracking-widest uppercase">DMLV</span>
+                    </div>
+
+                    <div class="text-center md:text-left space-y-2">
+                        <div class="inline-flex items-center space-x-2 bg-amber-500/20 text-amber-300 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/30">
+                            <i class="fa-solid fa-code"></i>
+                            <span>Concepteur & Ingénieur Pédagogique</span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-extrabold font-serif-title text-slate-100">Depie Metushelah La Vigne</h2>
+                        <p class="text-slate-300 text-xs md:text-sm max-w-2xl leading-relaxed">
+                            Juriste-Publiciste passionné du Droit Positif, développeur de solutions logicielles à fort impact social et formateur en e-commerce transfrontalier.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Détails du Parcours Professionnel & Académique -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Qualifications Académiques -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 text-slate-800 space-y-3">
+                    <div class="flex items-center space-x-2 text-indigo-950 font-bold text-base">
+                        <i class="fa-solid fa-graduation-cap text-amber-600"></i>
+                        <h3 class="font-serif-title">Qualifications Académiques</h3>
+                    </div>
+                    <ul class="text-xs space-y-2 text-slate-700">
+                        <li class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>Maîtrise en Droit Public</strong> — Université Alassane Ouattara de Bouaké (UAO).
+                        </li>
+                        <li class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>Master 2 en Droit des Contentieux et Recouvrement</strong> — Université Félix Houphouët-Boigny d'Abidjan (UFHB).
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Certifications Professionnelles -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 text-slate-800 space-y-3">
+                    <div class="flex items-center space-x-2 text-indigo-950 font-bold text-base">
+                        <i class="fa-solid fa-certificate text-emerald-600"></i>
+                        <h3 class="font-serif-title">Certifications Internationales</h3>
+                    </div>
+                    <ul class="text-xs space-y-2 text-slate-700">
+                        <li class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200">
+                            <strong>Introduction à la Cybersécurité</strong> — HP LIFE.
+                        </li>
+                        <li class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200">
+                            <strong>Gestion de Projet</strong> — Save Our Children.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Responsabilités Citoyennes & Engagement -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 text-slate-800 space-y-3">
+                    <div class="flex items-center space-x-2 text-indigo-950 font-bold text-base">
+                        <i class="fa-solid fa-landmark text-amber-600"></i>
+                        <h3 class="font-serif-title">Responsabilités & Statut</h3>
+                    </div>
+                    <ul class="text-xs space-y-2 text-slate-700">
+                        <li class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>Directeur chargé des affaires juridiques</strong> au Parlement des Jeunes de Côte d'Ivoire (section Anyama).
+                        </li>
+                        <li class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>Juriste indépendant</strong> spécialisé en droit positif ivoirien, conseil et audit contractuel.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Expériences Professionnelles -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 text-slate-800 space-y-3">
+                    <div class="flex items-center space-x-2 text-indigo-950 font-bold text-base">
+                        <i class="fa-solid fa-briefcase text-blue-600"></i>
+                        <h3 class="font-serif-title">Expériences de Terrain</h3>
+                    </div>
+                    <ul class="text-xs space-y-2 text-slate-700">
+                        <li class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>Formation spécialisée en contrats d'assurance</strong> avec NSIA Banque.
+                        </li>
+                        <li class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>Stage école et de perfectionnement (2024 - 2025)</strong> au Service Juridique, Contentieux et Recouvrement du <strong>Port Autonome d'Abidjan (PAA)</strong>.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Expertises Numériques & E-Commerce -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 text-slate-800 space-y-3 md:col-span-2">
+                    <div class="flex items-center space-x-2 text-indigo-950 font-bold text-base">
+                        <i class="fa-solid fa-laptop-code text-cyan-600"></i>
+                        <h3 class="font-serif-title">Expertises Numériques & E-Commerce</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Passionné par le droit du numérique et de la cybercriminalité, <strong>développeur web & mobile</strong> d'applications éducatives, et <strong>formateur spécialisé en commerce électronique</strong> et sourcing international (Alibaba, 1688, Taobao, Pinduoduo).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Module de Soutien et Don Volontaire -->
+            <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-slate-950 p-6 md:p-8 rounded-3xl shadow-2xl space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-slate-950 text-amber-400 rounded-2xl flex items-center justify-center text-xl shadow-lg shrink-0">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold font-serif-title text-slate-950">Soutenir le Projet — Don Facultatif</h3>
+                        <p class="text-xs text-slate-950 font-medium">L'application demeure 100% gratuite pour tous. Tout soutien financier volontaire contribue aux frais techniques et d'enrichissement de la base.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div class="bg-white/95 p-4 rounded-2xl text-slate-900 shadow">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase mb-1">Wave / Mobile Money (CI)</div>
+                        <div class="text-sm font-black text-slate-950 flex flex-col gap-1">
+                            <a href="tel:+2250757846227" class="hover:underline flex items-center gap-1.5"><i class="fa-solid fa-phone text-emerald-600"></i> 07 57 84 62 27</a>
+                            <a href="tel:+2250141768414" class="hover:underline flex items-center gap-1.5"><i class="fa-solid fa-phone text-emerald-600"></i> 01 41 76 84 14</a>
+                        </div>
+                        <div class="text-[11px] text-slate-600 font-semibold mt-1">Titulaire : Depie Metushelah La Vigne</div>
+                    </div>
+
+                    <div class="bg-white/95 p-4 rounded-2xl text-slate-900 shadow">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase mb-1">WhatsApp Direct</div>
+                        <div class="text-xs text-slate-600 mb-2 font-medium">Pour échanger directement avec le concepteur</div>
+                        <a href="https://wa.me/2250757846227" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition shadow">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span>Ouvrir WhatsApp</span>
+                        </a>
+                    </div>
+
+                    <div class="bg-white/95 p-4 rounded-2xl text-slate-900 shadow">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase mb-1">E-mail Officiel</div>
+                        <div class="text-xs font-bold text-slate-950 flex items-center space-x-1.5 truncate mb-2">
+                            <i class="fa-solid fa-envelope text-amber-600"></i>
+                            <a href="mailto:metushelahdepie@gmail.com" class="hover:underline truncate">metushelahdepie@gmail.com</a>
+                        </div>
+                        <div class="text-[11px] text-slate-600 font-semibold">Réponse sous 24h</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== MODAL 1 : BILAN DE SESSION ==================== -->
+    <div id="modal-summary" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl text-white space-y-6 text-center">
+            <div id="sum-badge" class="p-4 bg-emerald-500/20 text-emerald-400 rounded-2xl border border-emerald-500/30 text-3xl inline-flex items-center justify-center">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            
+            <div class="space-y-2">
+                <h3 id="sum-title" class="text-2xl font-bold font-serif-title text-emerald-400">Palier Validé !</h3>
+                <p id="sum-message" class="text-xs md:text-sm text-slate-300 leading-relaxed">
+                    Votre résultat a été enregistré avec succès dans votre progression personnelle.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                <div>
+                    <div class="text-xs text-slate-400 uppercase font-bold">Bonnes Réponses</div>
+                    <div id="sum-score-display" class="text-2xl font-black text-amber-300">0 / 0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-400 uppercase font-bold">Pourcentage</div>
+                    <div id="sum-percent-display" class="text-2xl font-black text-emerald-400">0%</div>
+                </div>
+            </div>
+
+            <!-- Rappel discret de soutien / Don volontaire -->
+            <div class="bg-gradient-to-r from-amber-500/10 via-slate-800/70 to-amber-500/10 border border-amber-500/25 rounded-2xl p-3.5 text-left space-y-2">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-heart text-rose-400 text-xs"></i>
+                        <span class="text-xs font-bold text-amber-300">Soutenir ce projet d'intérêt général</span>
+                    </div>
+                    <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">Libre</span>
+                </div>
+                <p class="text-[11px] text-slate-300 leading-relaxed">
+                    Le Juriste Pro œuvre pour la gratuité et l'égalité des chances. Vous pouvez encourager le projet par un don volontaire <strong>(Wave / Orange / Moov)</strong> au :
+                </p>
+                <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 text-[11px] font-mono font-bold text-amber-300 bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                    <div class="flex items-center gap-1">
+                        <i class="fa-solid fa-mobile-screen text-amber-400 text-[10px]"></i>
+                        <span>07 57 84 62 27</span> / <span>01 41 76 84 14</span>
+                    </div>
+                    <button onclick="closeModal('modal-summary'); openModal('modal-donate');" class="text-[10px] font-sans font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 px-2.5 py-1 rounded-lg transition ml-auto">
+                        Détails
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="closeModal('modal-summary'); switchTab('dashboard');" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-3.5 rounded-2xl transition shadow-xl gold-glow text-sm">
+                Retour au Tableau de Bord
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 2 : SOUTIEN / DON FACULTATIF ==================== -->
+    <div id="modal-donate" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all">
+        <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl text-white space-y-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold font-serif-title text-amber-300">Soutenir Le Juriste Pro</h3>
+                        <p class="text-xs text-slate-400">Don Libre & Facultatif • 100% Gratuit pour tous</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('modal-donate')" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl text-xs text-emerald-200 space-y-1">
+                <div class="font-bold text-sm text-emerald-300 flex items-center">
+                    <i class="fa-solid fa-circle-check mr-2"></i> Accès intégral 100% gratuit
+                </div>
+                <p>Aucun paiement n'est exigé pour réviser l'ensemble des 20 000 QCM. Votre don volontaire permet de financer les serveurs et l'hébergement de la plateforme.</p>
+            </div>
+
+            <div class="space-y-3">
+                <div class="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 space-y-2">
+                    <div class="text-xs text-slate-400 font-medium">Wave / Orange Money / MTN / Moov (Côte d'Ivoire) :</div>
+                    <div class="flex flex-col gap-1.5 text-base font-black text-amber-300">
+                        <div class="flex items-center justify-between">
+                            <span>07 57 84 62 27</span>
+                            <a href="tel:+2250757846227" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1 rounded-xl font-bold transition">Appeler</a>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>01 41 76 84 14</span>
+                            <a href="tel:+2250141768414" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1 rounded-xl font-bold transition">Appeler</a>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-slate-400 pt-1 border-t border-slate-700">Titulaire : <strong>Depie Metushelah La Vigne</strong></div>
+                </div>
+
+                <div class="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-slate-300 font-bold">Contact Direct WhatsApp</div>
+                        <div class="text-[11px] text-slate-400">Échanger avec le développeur</div>
+                    </div>
+                    <a href="https://wa.me/2250757846227" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
+                        <i class="fa-brands fa-whatsapp"></i> Discuter
+                    </a>
+                </div>
+            </div>
+
+            <button onclick="closeModal('modal-donate')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3 rounded-2xl transition text-xs">
+                Poursuivre mes révisions gratuites
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 3 : NOUVELLE QUESTION FORUM ==================== -->
+    <div id="modal-community-new" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full p-6 shadow-2xl text-white space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-amber-300 flex items-center">
+                    <i class="fa-solid fa-pen-to-square mr-2"></i> Poser une Question au Forum
+                </h3>
+                <button onclick="closeModal('modal-community-new')" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <input type="text" id="community-author" placeholder="Votre nom & niveau (ex: Traoré K., M1 Droit des Affaires)" class="w-full text-xs bg-slate-800 border border-slate-700 text-white rounded-xl p-3 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            <input type="text" id="community-title" placeholder="Sujet de votre question (ex: Question sur l'Acte Uniforme OHADA AUVE)" class="w-full text-xs bg-slate-800 border border-slate-700 text-white rounded-xl p-3 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            <textarea id="community-message" rows="4" placeholder="Détaillez votre question ou le point de droit qui vous pose difficulté..." class="w-full text-xs bg-slate-800 border border-slate-700 text-white rounded-xl p-3 focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+            <button onclick="publishCommunityPost()" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-3 rounded-xl transition shadow-md flex items-center justify-center space-x-2 text-xs">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Publier sur le forum</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 4 : SIGNALEMENT ==================== -->
+    <div id="modal-report" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full p-6 shadow-2xl text-white space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-rose-400 flex items-center">
+                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> Signalement ou Remarque
+                </h3>
+                <button onclick="closeModal('modal-report')" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <textarea id="report-message" rows="4" placeholder="Précisez la question ou l'erreur constatée..." class="w-full text-sm bg-slate-800 border border-slate-700 text-white rounded-xl p-3 focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+            <button onclick="sendReport()" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl transition shadow-md flex items-center justify-center space-x-2 text-xs">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Transmettre à metushelahdepie@gmail.com</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 5 : AUTHENTIFICATION SUPABASE ==================== -->
+    <div id="modal-auth" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-amber-500/30 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl text-white space-y-5 animate-fade-in">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm font-bold border border-amber-500/30">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold font-serif-title text-amber-300">Compte Juriste Pro</h3>
+                        <p class="text-[10px] text-slate-400">Authentification sécurisée Supabase</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('modal-auth')" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Onglets Connexion / Inscription -->
+            <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <button id="auth-tab-login" onclick="switchAuthTab('login')" class="py-2 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition">
+                    Se connecter
+                </button>
+                <button id="auth-tab-signup" onclick="switchAuthTab('signup')" class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition">
+                    S'inscrire
+                </button>
+            </div>
+
+            <!-- Formulaire -->
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Adresse E-mail</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 text-xs">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        <input type="email" id="auth-email" required placeholder="nom@exemple.com" class="w-full text-xs bg-slate-800 border border-slate-700 pl-8 pr-3 py-2.5 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Mot de passe</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 text-xs">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="password" id="auth-password" required minlength="6" placeholder="•••••••• (min. 6 caractères)" class="w-full text-xs bg-slate-800 border border-slate-700 pl-8 pr-3 py-2.5 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div id="auth-error-msg" class="hidden text-xs text-rose-400 bg-rose-950/40 border border-rose-800/60 p-2.5 rounded-xl"></div>
+                <div id="auth-success-msg" class="hidden text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 p-2.5 rounded-xl"></div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-3 rounded-xl transition shadow-lg flex items-center justify-center space-x-2 text-xs">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <span id="auth-submit-text">Se connecter</span>
+                </button>
+            </form>
+
+            <p class="text-[10px] text-center text-slate-400 leading-relaxed">
+                Vos informations et votre abonnement sont synchronisés de manière chiffrée sur la base Supabase.
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts de l'application -->
+    <script src="questions.js"></script>
+
+    <!-- Supabase JS Client SDK via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- CinetPay Seamless SDK — Paiement mobile (Orange Money, MTN, Wave…) -->
+    <!-- ⚠️  Clés à configurer dans app.js : CINETPAY_CONFIG.apikey & site_id  -->
+    <!-- Obtenir vos clés sur : https://cinetpay.com → Tableau de bord → API   -->
+    <script src="https://cdn.cinetpay.com/seamless/main.js"></script>
+
+    <script src="app.js"></script>
+</body>
+</html>

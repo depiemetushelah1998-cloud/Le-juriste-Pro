@@ -1,0 +1,2 @@
+# Netlify redirects: ne rediriger que si le fichier statique n'existe pas
+# Le paramètre par défaut de Netlify sans force (200) ne touche pas aux fichiers statiques existants

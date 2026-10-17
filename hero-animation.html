@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OHADA Juridique — Hero Animation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@300;400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:        #D4A843;
+      --gold-light:  #F5D07A;
+      --gold-glow:   rgba(212,168,67,0.35);
+      --navy:        #050D1A;
+      --navy-mid:    #0A1628;
+      --navy-light:  #0F2040;
+      --glass-bg:    rgba(10,22,40,0.55);
+      --glass-border:rgba(212,168,67,0.25);
+      --text-dim:    rgba(180,200,230,0.07);
+      --text-bright: rgba(245,208,122,0.12);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--navy);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ═══════════════════════════════
+       BACKGROUND LAYER
+    ═══════════════════════════════ */
+    #bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #040C1A 0%, #071428 40%, #0A1E38 70%, #050D1A 100%);
+      overflow: hidden;
+    }
+
+    #bg::after {
+      content:'';
+      position:absolute; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: 0.4; pointer-events:none;
+    }
+
+    .glow-orb {
+      position:absolute; border-radius:50%;
+      filter: blur(80px); pointer-events:none; mix-blend-mode:screen;
+    }
+    .glow-orb.a { width:500px;height:500px; background:rgba(15,40,90,0.5); top:-100px;left:-100px; animation: floatOrb 12s ease-in-out infinite; }
+    .glow-orb.b { width:400px;height:400px; background:rgba(212,168,67,0.08); bottom:-80px;right:-80px; animation: floatOrb 15s ease-in-out infinite reverse; }
+    .glow-orb.c { width:300px;height:300px; background:rgba(30,80,160,0.15); top:40%;left:60%; animation: floatOrb 9s ease-in-out infinite 3s; }
+
+    @keyframes floatOrb {
+      0%,100%{transform:translate(0,0);}
+      33%{transform:translate(20px,-30px);}
+      66%{transform:translate(-15px,20px);}
+    }
+
+    #legal-columns {
+      position:absolute; inset:0;
+      display:flex; gap:0; pointer-events:none;
+    }
+
+    .legal-col {
+      flex:1; overflow:hidden; position:relative;
+      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+
+    .legal-track {
+      display:flex; flex-direction:column; gap:14px;
+      font-family:'JetBrains Mono', monospace;
+      font-size:10.5px; font-weight:300; line-height:1.6;
+      color: var(--text-dim);
+      animation: scrollUp linear infinite;
+      will-change: transform;
+    }
+    .legal-col:nth-child(odd)  .legal-track { animation-direction: normal; }
+    .legal-col:nth-child(even) .legal-track { animation-direction: reverse; }
+    .legal-col:nth-child(1) .legal-track  { animation-duration:38s; }
+    .legal-col:nth-child(2) .legal-track  { animation-duration:44s; }
+    .legal-col:nth-child(3) .legal-track  { animation-duration:32s; }
+    .legal-col:nth-child(4) .legal-track  { animation-duration:50s; }
+    .legal-col:nth-child(5) .legal-track  { animation-duration:41s; }
+
+    @keyframes scrollUp {
+      from{transform:translateY(0);}
+      to  {transform:translateY(-50%);}
+    }
+
+    .legal-line { padding: 0 10px; }
+    .legal-line.highlight { color: var(--text-bright); }
+
+    #light-beam {
+      position:absolute; top:0; width:2px; height:100%;
+      background:linear-gradient(to bottom,
+        transparent 0%,
+        rgba(212,168,67,0.0) 10%,
+        rgba(212,168,67,0.6) 40%,
+        rgba(245,208,122,0.9) 50%,
+        rgba(212,168,67,0.6) 60%,
+        rgba(212,168,67,0.0) 90%,
+        transparent 100%);
+      filter: blur(1px);
+      animation: beamSweep 8s ease-in-out infinite;
+      pointer-events:none; z-index:2;
+    }
+    #light-beam::after {
+      content:''; position:absolute; top:0; left:50%;
+      transform:translateX(-50%);
+      width:120px; height:100%;
+      background:linear-gradient(to bottom,
+        transparent 0%, rgba(212,168,67,0.03) 40%,
+        rgba(212,168,67,0.07) 50%,
+        rgba(212,168,67,0.03) 60%, transparent 100%);
+      filter:blur(20px);
+    }
+
+    @keyframes beamSweep {
+      0%   {left:10%; opacity:0;}
+      10%  {opacity:1;}
+      50%  {left:88%;}
+      90%  {opacity:1;}
+      100% {left:10%; opacity:0;}
+    }
+
+    #scan-line {
+      position:absolute; left:0; right:0; height:1px;
+      background:linear-gradient(to right,
+        transparent, rgba(212,168,67,0.15) 20%,
+        rgba(212,168,67,0.5) 50%,
+        rgba(212,168,67,0.15) 80%, transparent);
+      pointer-events:none; z-index:3;
+      animation: scanY 6s ease-in-out infinite 1s;
+      filter:blur(0.5px);
+    }
+    @keyframes scanY {
+      0%  {top:-2px; opacity:0;}
+      5%  {opacity:1;}
+      95% {opacity:1;}
+      100%{top:100%; opacity:0;}
+    }
+
+    /* ═══════════════════════════════
+       FOREGROUND — MCQ CARD
+    ═══════════════════════════════ */
+    #stage {
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      z-index:10; pointer-events:none;
+    }
+
+    #card-wrapper {
+      position:relative; width:520px;
+      animation: cardFloat 5s ease-in-out infinite;
+      filter: drop-shadow(0 30px 60px rgba(0,0,0,0.6)) drop-shadow(0 0 40px rgba(212,168,67,0.12));
+    }
+    @keyframes cardFloat {
+      0%,100%{transform:translateY(0) rotate(0deg);}
+      33%    {transform:translateY(-12px) rotate(0.4deg);}
+      66%    {transform:translateY(6px) rotate(-0.2deg);}
+    }
+
+    #mcq-card {
+      background: var(--glass-bg);
+      border:1px solid var(--glass-border);
+      border-radius:20px;
+      padding:36px 40px 32px;
+      backdrop-filter: blur(28px) saturate(1.4);
+      -webkit-backdrop-filter: blur(28px) saturate(1.4);
+      position:relative; overflow:hidden;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    #mcq-card::before {
+      content:''; position:absolute;
+      top:-60px; left:50%; transform:translateX(-50%);
+      width:300px; height:120px;
+      background:radial-gradient(ellipse, rgba(212,168,67,0.18) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    #mcq-card::after {
+      content:''; position:absolute; inset:0;
+      border-radius:20px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+      pointer-events:none;
+    }
+
+    .card-header {
+      display:flex; align-items:center; gap:12px; margin-bottom:22px;
+    }
+    .card-icon {
+      width:40px; height:40px; border-radius:10px;
+      background:linear-gradient(135deg, rgba(212,168,67,0.3), rgba(212,168,67,0.1));
+      border:1px solid rgba(212,168,67,0.4);
+      display:flex; align-items:center; justify-content:center;
+      font-size:18px;
+    }
+    .card-tag {
+      font-size:10px; font-weight:700; letter-spacing:2.5px;
+      color:var(--gold); text-transform:uppercase;
+      background:rgba(212,168,67,0.1); border:1px solid rgba(212,168,67,0.2);
+      padding:4px 10px; border-radius:20px;
+    }
+    .card-number {
+      margin-left:auto; font-size:12px; color:rgba(180,200,230,0.4);
+      font-family:'JetBrains Mono', monospace;
+    }
+
+    .question-text {
+      font-family:'Playfair Display', serif;
+      font-size:17px; font-weight:700;
+      color:rgba(230,240,255,0.92);
+      line-height:1.55; margin-bottom:24px;
+    }
+    .question-text em {
+      color:var(--gold-light); font-style:normal;
+      background:rgba(212,168,67,0.1);
+      padding:1px 5px; border-radius:4px;
+    }
+
+    .options { display:flex; flex-direction:column; gap:10px; }
+
+    .option {
+      display:flex; align-items:center; gap:14px;
+      padding:12px 16px; border-radius:12px;
+      border:1px solid rgba(180,200,230,0.1);
+      background:rgba(255,255,255,0.03);
+      transition:all 0.3s ease; cursor:default; position:relative;
+      overflow:hidden;
+    }
+    .option::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(90deg, rgba(212,168,67,0) 0%, rgba(212,168,67,0.04) 100%);
+      opacity:0; transition:opacity 0.3s;
+    }
+
+    .option-letter {
+      width:28px; height:28px; border-radius:8px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:700; font-family:'JetBrains Mono', monospace;
+      border:1px solid rgba(180,200,230,0.2);
+      color:rgba(180,200,230,0.6);
+      background:rgba(180,200,230,0.05);
+      transition:all 0.4s ease;
+    }
+    .option-text {
+      font-size:13px; color:rgba(200,215,235,0.75);
+      line-height:1.4; transition:color 0.3s;
+    }
+
+    .option.hovered {
+      border-color:rgba(212,168,67,0.3);
+      background:rgba(212,168,67,0.05);
+    }
+    .option.hovered::before { opacity:1; }
+    .option.hovered .option-letter {
+      border-color:rgba(212,168,67,0.5);
+      color:var(--gold-light);
+      background:rgba(212,168,67,0.12);
+    }
+    .option.hovered .option-text { color:rgba(230,240,255,0.9); }
+
+    .option.correct {
+      border-color:rgba(212,168,67,0.7);
+      background:rgba(212,168,67,0.12);
+      animation: correctPulse 0.5s ease;
+    }
+    .option.correct .option-letter {
+      background:var(--gold); color:#050D1A;
+      border-color:var(--gold); font-size:14px;
+    }
+    .option.correct .option-text {
+      color:rgba(245,230,190,1); font-weight:600;
+    }
+    @keyframes correctPulse {
+      0%{transform:scale(1);}
+      40%{transform:scale(1.025);}
+      100%{transform:scale(1);}
+    }
+
+    .option.wrong {
+      border-color:rgba(180,80,80,0.4);
+      background:rgba(180,80,80,0.06);
+    }
+    .option.wrong .option-letter {
+      background:rgba(180,80,80,0.2); color:rgba(255,150,150,0.8);
+      border-color:rgba(180,80,80,0.3);
+    }
+
+    .card-footer {
+      margin-top:22px; display:flex; align-items:center; gap:14px;
+    }
+    .progress-bar-track {
+      flex:1; height:4px; border-radius:2px;
+      background:rgba(180,200,230,0.1); overflow:hidden;
+    }
+    .progress-bar-fill {
+      height:100%; border-radius:2px; width:0%;
+      background:linear-gradient(to right, rgba(212,168,67,0.6), var(--gold));
+      transition:width 0.6s ease;
+      box-shadow:0 0 8px rgba(212,168,67,0.5);
+    }
+    .progress-label {
+      font-size:11px; color:rgba(180,200,230,0.4);
+      font-family:'JetBrains Mono', monospace; white-space:nowrap;
+    }
+
+    #validation-badge {
+      position:absolute; top:-18px; right:20px;
+      background:linear-gradient(135deg, var(--gold), #C8930A);
+      color:#050D1A; font-weight:800; font-size:12px;
+      letter-spacing:1.5px; text-transform:uppercase;
+      padding:8px 18px; border-radius:30px;
+      display:flex; align-items:center; gap:7px;
+      box-shadow:0 8px 32px rgba(212,168,67,0.5), 0 0 0 2px rgba(212,168,67,0.2);
+      opacity:0; transform:translateY(10px) scale(0.85);
+      transition:opacity 0.4s cubic-bezier(.34,1.56,.64,1), transform 0.4s cubic-bezier(.34,1.56,.64,1);
+      pointer-events:none; z-index:20;
+    }
+    #validation-badge.visible {
+      opacity:1; transform:translateY(0) scale(1);
+    }
+    #validation-badge .badge-icon { font-size:15px; }
+
+    #cursor {
+      position:absolute; width:28px; height:28px; pointer-events:none;
+      z-index:30; transform:translate(-50%, -50%);
+      filter:drop-shadow(0 4px 12px rgba(212,168,67,0.4));
+      transition: transform 0.1s;
+    }
+    #cursor svg { width:100%; height:100%; }
+
+    #particle-canvas {
+      position:absolute; inset:0; pointer-events:none;
+      z-index:25; width:100%; height:100%;
+    }
+
+    /* ═══════════════════════════════
+       TITLE OVERLAY
+    ═══════════════════════════════ */
+    #hero-title {
+      position:absolute; top:42px; left:50%; transform:translateX(-50%);
+      text-align:center; z-index:10; pointer-events:none; white-space:nowrap;
+    }
+    .hero-eyebrow {
+      font-size:10.5px; letter-spacing:4px; font-weight:600;
+      color:rgba(212,168,67,0.7); text-transform:uppercase; margin-bottom:8px;
+    }
+    .hero-main {
+      font-family:'Playfair Display', serif;
+      font-size:38px; font-weight:900;
+      background:linear-gradient(135deg, #F5D07A 0%, #D4A843 45%, #FAEDBE 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text; line-height:1.15;
+      animation: titleShimmer 4s ease-in-out infinite;
+    }
+    @keyframes titleShimmer {
+      0%,100%{filter:brightness(1);}
+      50%{filter:brightness(1.15);}
+    }
+    .hero-sub {
+      font-size:13px; color:rgba(180,200,230,0.45); margin-top:8px;
+      letter-spacing:0.5px;
+    }
+
+    /* ═══════════════════════════════
+       BOTTOM INDICATOR DOTS
+    ═══════════════════════════════ */
+    #dots {
+      position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
+      display:flex; gap:8px; z-index:10; pointer-events:none;
+    }
+    .dot {
+      width:6px; height:6px; border-radius:3px;
+      background:rgba(180,200,230,0.2);
+      transition:all 0.4s ease;
+    }
+    .dot.active {
+      width:22px;
+      background:linear-gradient(to right, var(--gold), var(--gold-light));
+      box-shadow:0 0 8px rgba(212,168,67,0.4);
+    }
+
+    /* ═══════════════════════════════
+       DECORATIVE CORNER LINES
+    ═══════════════════════════════ */
+    .corner {
+      position:absolute; width:40px; height:40px;
+      pointer-events:none; z-index:5;
+    }
+    .corner::before,.corner::after {
+      content:''; position:absolute;
+      background:rgba(212,168,67,0.35);
+    }
+    .corner::before { width:2px; height:100%; }
+    .corner::after  { width:100%; height:2px; }
+    .corner.tl { top:20px; left:20px; }
+    .corner.tr { top:20px; right:20px; transform:scaleX(-1); }
+    .corner.bl { bottom:20px; left:20px; transform:scaleY(-1); }
+    .corner.br { bottom:20px; right:20px; transform:scale(-1); }
+
+    /* ═══════════════════════════════
+       TTS MUTE BUTTON
+    ═══════════════════════════════ */
+    #tts-btn {
+      position:absolute; bottom:26px; right:28px;
+      z-index:50; display:flex; align-items:center; gap:9px;
+      background: rgba(10,22,40,0.72);
+      border:1px solid rgba(212,168,67,0.3);
+      border-radius:40px; padding:9px 18px 9px 14px;
+      cursor:pointer; backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      user-select:none;
+    }
+    #tts-btn:hover {
+      border-color:rgba(212,168,67,0.65);
+      background: rgba(10,22,40,0.9);
+      box-shadow: 0 4px 24px rgba(212,168,67,0.18);
+    }
+    #tts-btn .tts-icon {
+      width:22px; height:22px; position:relative;
+      display:flex; align-items:center; justify-content:center;
+    }
+    #tts-btn .tts-icon svg { width:18px; height:18px; }
+    #tts-btn .tts-label {
+      font-size:11px; font-weight:600; letter-spacing:1.2px;
+      text-transform:uppercase; color:rgba(212,168,67,0.85);
+      font-family:'Inter', sans-serif;
+    }
+    #tts-btn.muted .tts-label { color:rgba(180,200,230,0.4); }
+    #tts-btn.muted { border-color:rgba(180,200,230,0.15); }
+
+    /* TTS waveform animation (when speaking) */
+    #tts-waves {
+      display:flex; align-items:center; gap:3px;
+      height:16px;
+    }
+    #tts-waves span {
+      display:block; width:3px; border-radius:2px;
+      background: var(--gold);
+      animation: wave 0.8s ease-in-out infinite;
+      transform-origin:bottom;
+    }
+    #tts-waves span:nth-child(1){height:6px;  animation-delay:0s;}
+    #tts-waves span:nth-child(2){height:12px; animation-delay:0.1s;}
+    #tts-waves span:nth-child(3){height:16px; animation-delay:0.2s;}
+    #tts-waves span:nth-child(4){height:10px; animation-delay:0.15s;}
+    #tts-waves span:nth-child(5){height:6px;  animation-delay:0.05s;}
+    #tts-btn.muted #tts-waves span,
+    #tts-btn.silent #tts-waves span {
+      animation:none;
+      background:rgba(180,200,230,0.25);
+      height:4px !important;
+    }
+    @keyframes wave {
+      0%,100%{transform:scaleY(0.4); opacity:0.6;}
+      50%    {transform:scaleY(1);   opacity:1;}
+    }
+
+    /* TTS reading indicator strip under card */
+    #tts-reading-bar {
+      position:absolute; bottom:-6px; left:20px; right:20px;
+      height:2px; border-radius:1px;
+      background:linear-gradient(to right,
+        transparent, rgba(212,168,67,0.5) 30%,
+        rgba(245,208,122,0.9) 50%,
+        rgba(212,168,67,0.5) 70%, transparent);
+      opacity:0; transition:opacity 0.3s;
+      animation: readingPulse 1.5s ease-in-out infinite;
+    }
+    #tts-reading-bar.active { opacity:1; }
+    @keyframes readingPulse {
+      0%,100%{background-position:0% 50%;}
+      50%    {background-position:100% 50%;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div id="bg">
+  <div class="glow-orb a"></div>
+  <div class="glow-orb b"></div>
+  <div class="glow-orb c"></div>
+  <div id="legal-columns"></div>
+  <div id="light-beam"></div>
+  <div id="scan-line"></div>
+</div>
+
+<!-- DECORATIVE CORNERS -->
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<!-- HERO TITLE -->
+<div id="hero-title">
+  <div class="hero-eyebrow">Plateforme d'Excellence Juridique</div>
+  <div class="hero-main">OHADA Juridique</div>
+  <div class="hero-sub">Droit des affaires · Traités &amp; Actes uniformes · Formation continue</div>
+</div>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- MCQ CARD STAGE -->
+<div id="stage">
+  <div id="card-wrapper">
+    <div id="validation-badge">
+      <span class="badge-icon">✓</span> Bonne réponse !
+    </div>
+    <div id="mcq-card">
+      <div class="card-header">
+        <div class="card-icon">⚖</div>
+        <div class="card-tag">QCM · OHADA</div>
+        <div class="card-number">Q 03 / 10</div>
+      </div>
+      <div class="question-text" id="question-text">
+        Selon l'<em>Acte uniforme OHADA</em> sur le droit commercial général,
+        le registre du commerce et du crédit mobilier (RCCM) est tenu par :
+      </div>
+      <div class="options" id="options-list">
+        <div class="option" data-correct="false" data-index="0">
+          <div class="option-letter">A</div>
+          <div class="option-text">Le Ministère de la Justice de chaque État partie</div>
+        </div>
+        <div class="option" data-correct="false" data-index="1">
+          <div class="option-letter">B</div>
+          <div class="option-text">La Cour Commune de Justice et d'Arbitrage (CCJA)</div>
+        </div>
+        <div class="option" data-correct="true" data-index="2">
+          <div class="option-letter">C</div>
+          <div class="option-text">Le greffe du tribunal compétent ou l'organe compétent désigné</div>
+        </div>
+        <div class="option" data-correct="false" data-index="3">
+          <div class="option-letter">D</div>
+          <div class="option-text">La Chambre de commerce de l'État membre concerné</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-label" id="progress-label">3 / 10</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CURSOR -->
+<div id="cursor">
+  <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="cs" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(212,168,67,0.5)"/>
+      </filter>
+    </defs>
+    <path filter="url(#cs)" d="M5 3L22 14L13.5 15.5L10 24L5 3Z" fill="#F5D07A" stroke="#050D1A" stroke-width="1"/>
+    <circle cx="22" cy="14" r="4" fill="rgba(212,168,67,0.25)" stroke="rgba(212,168,67,0.6)" stroke-width="1">
+      <animate attributeName="r" values="4;7;4" dur="1s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+    </circle>
+  </svg>
+</div>
+
+<!-- DOTS -->
+<div id="dots">
+  <div class="dot active" id="dot-0"></div>
+  <div class="dot" id="dot-1"></div>
+  <div class="dot" id="dot-2"></div>
+</div>
+
+<!-- TTS READING BAR -->
+<div id="tts-reading-bar"></div>
+
+<!-- TTS MUTE BUTTON -->
+<button id="tts-btn" title="Activer / désactiver la synthèse vocale" aria-label="Synthèse vocale">
+  <div class="tts-icon">
+    <div id="tts-waves">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+  <span class="tts-label" id="tts-label-text">Voix active</span>
+</button>
+
+<script>
+/* ═══════════════════════════════════════
+   ████  TTS ENGINE — SYNTHÈSE VOCALE  ████
+   Web Speech API · Français · rate 1.1
+═══════════════════════════════════════ */
+const TTS = (() => {
+  const synth   = window.speechSynthesis;
+  let muted     = false;
+  let speaking  = false;
+  let frVoice   = null;
+  const readingBar = document.getElementById('tts-reading-bar');
+  const btn        = document.getElementById('tts-btn');
+  const btnLabel   = document.getElementById('tts-label-text');
+
+  /* ── Pick best French voice ── */
+  function pickVoice() {
+    const voices = synth.getVoices();
+    // Priority: fr-FR > fr- prefix > any French
+    return (
+      voices.find(v => v.lang === 'fr-FR' && !v.name.toLowerCase().includes('compact')) ||
+      voices.find(v => v.lang === 'fr-FR') ||
+      voices.find(v => v.lang.startsWith('fr')) ||
+      voices.find(v => v.lang.startsWith('fr-')) ||
+      null
+    );
+  }
+
+  /* Load voices (async on some browsers) */
+  if (synth.onvoiceschanged !== undefined) {
+    synth.onvoiceschanged = () => { frVoice = pickVoice(); };
+  }
+  setTimeout(() => { frVoice = pickVoice(); }, 300);
+
+  /* ── Strip HTML tags from question text ── */
+  function stripHTML(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  }
+
+  /* ── Core speak function — returns a Promise that resolves when done ── */
+  function speak(text) {
+    return new Promise(resolve => {
+      if (muted || !synth) { resolve(); return; }
+      synth.cancel(); // cancel any ongoing speech
+      const utt       = new SpeechSynthesisUtterance(text);
+      utt.lang        = 'fr-FR';
+      utt.rate        = 1.1;   // légèrement accélérée
+      utt.pitch       = 1.0;   // tonalité naturelle
+      utt.volume      = 0.95;
+      if (frVoice) utt.voice = frVoice;
+      utt.onstart = () => {
+        speaking = true;
+        readingBar && readingBar.classList.add('active');
+      };
+      utt.onend = utt.onerror = () => {
+        speaking = false;
+        readingBar && readingBar.classList.remove('active');
+        resolve();
+      };
+      // Chrome bug workaround: resume if paused
+      synth.speak(utt);
+      setTimeout(() => { if (synth.paused) synth.resume(); }, 100);
+    });
+  }
+
+  /* ── Build structured speech for a question ── */
+  async function announceQuestion(q) {
+    if (muted) return;
+    const letters  = ['A', 'B', 'C', 'D'];
+    const cleanQ   = stripHTML(q.text);
+    // 1. Announce question number
+    await speak(`Question numéro ${parseInt(q.qNum, 10)}.`);
+    // 2. Read the full question text
+    await speak(cleanQ);
+    // 3. Enumerate each option
+    for (let i = 0; i < q.answers.length; i++) {
+      if (muted) break;
+      await speak(`Option ${letters[i]}. ${q.answers[i]}`);
+    }
+  }
+
+  /* ── Announce validation result ── */
+  async function announceResult(correct) {
+    if (muted) return;
+    await speak(correct
+      ? 'Bonne réponse !'
+      : 'Mauvaise réponse.');
+  }
+
+  /* ── Stop all speech ── */
+  function stop() {
+    synth.cancel();
+    speaking = false;
+    readingBar && readingBar.classList.remove('active');
+  }
+
+  /* ── Toggle mute ── */
+  function toggleMute() {
+    muted = !muted;
+    if (muted) {
+      stop();
+      btn.classList.add('muted');
+      btnLabel.textContent = 'Voix coupée';
+    } else {
+      btn.classList.remove('muted');
+      btnLabel.textContent = 'Voix active';
+    }
+  }
+
+  /* ── Button interaction: click starts speech context + toggles mute ── */
+  btn.addEventListener('click', () => {
+    toggleMute();
+  });
+
+  /* ── First user interaction: unlock audio context ── */
+  let unlocked = false;
+  function unlock() {
+    if (unlocked) return;
+    unlocked = true;
+    const u = new SpeechSynthesisUtterance('');
+    u.volume = 0;
+    synth.speak(u);
+    frVoice = pickVoice();
+  }
+  document.addEventListener('click',     unlock, { once: true });
+  document.addEventListener('keydown',   unlock, { once: true });
+  document.addEventListener('mousemove', unlock, { once: true });
+
+  return { announceQuestion, announceResult, stop, isMuted: () => muted };
+})();
+
+/* ═══════════════════════════════════════
+   LEGAL TEXT DATA (OHADA excerpts)
+═══════════════════════════════════════ */
+const legalLines = [
+  "Art. 1 — Le présent Acte uniforme est applicable aux commerçants.",
+  "OHADA · Traité du 17 octobre 1993 · Port-Louis",
+  "Art. 12 — Toute société commerciale doit être immatriculée.",
+  "CCJA — Arrêt n°042/2021 · Cour Commune de Justice",
+  "Art. 5 — La personnalité morale naît de l'immatriculation.",
+  "Acte uniforme relatif au droit des sûretés",
+  "Art. 23 — Le cautionnement doit être constaté par écrit.",
+  "Secrétariat Permanent · OHADA · Yaoundé, Cameroun",
+  "Art. 7 — Le commerçant est celui qui fait des actes de commerce.",
+  "Acte uniforme portant organisation des procédures simplifiées",
+  "Art. 15 — L'injonction de payer est rendue par ordonnance.",
+  "Art. 88 — La société anonyme comprend au moins deux actionnaires.",
+  "AUDCG · Art. 3 — Tout commerçant, personne physique ou morale.",
+  "Règlement de Procédure de la CCJA — Art. 56",
+  "Art. 34 — Les statuts doivent être établis par acte notarié.",
+  "OHADA · Vision : intégration juridique de l'espace africain",
+  "Art. 67 — Le gérant est nommé pour une durée déterminée.",
+  "AUS · Art. 1 — Le gage est constitué sur des biens meubles.",
+  "Art. 19 — Le tribunal statue après avoir entendu les parties.",
+  "AUPSRVE · Art. 28 — La saisie est autorisée par ordonnance.",
+  "Art. 9 — Les livres de commerce font foi entre commerçants.",
+  "Acte uniforme relatif à l'arbitrage — Art. 2",
+  "Art. 53 — La dissolution entraîne la liquidation de la société.",
+  "AUDSCGIE · Les droits des actionnaires sont protégés.",
+  "Art. 44 — Tout associé peut consulter les documents sociaux.",
+  "Cour Commune de Justice et d'Arbitrage · Abidjan",
+  "Art. 122 — Le commissaire aux comptes est indépendant.",
+  "OHADA · 17 États membres · Droit harmonisé · Sécurité juridique",
+  "Art. 8 — L'acte de commerce peut être prouvé par tous moyens.",
+  "Acte uniforme sur les sociétés coopératives — Art. 1",
+  "Art. 29 — Le fonds de commerce comprend les éléments corporels.",
+  "AUI · Art. 5 — L'insolvabilité est constatée par le tribunal.",
+  "Art. 74 — L'assemblée générale ordinaire se réunit au moins une fois par an.",
+];
+
+/* ═══════════════════════════════════════
+   GENERATE LEGAL COLUMNS
+═══════════════════════════════════════ */
+const container = document.getElementById('legal-columns');
+const COLS = 5;
+for (let c = 0; c < COLS; c++) {
+  const col = document.createElement('div');
+  col.className = 'legal-col';
+  const track = document.createElement('div');
+  track.className = 'legal-track';
+  for (let pass = 0; pass < 2; pass++) {
+    const shuffled = [...legalLines].sort(() => Math.random() - 0.5);
+    shuffled.forEach(line => {
+      const div = document.createElement('div');
+      div.className = 'legal-line' + (Math.random() < 0.12 ? ' highlight' : '');
+      div.textContent = line;
+      track.appendChild(div);
+    });
+  }
+  col.appendChild(track);
+  container.appendChild(col);
+}
+
+/* ═══════════════════════════════════════
+   PARTICLE SYSTEM
+═══════════════════════════════════════ */
+const canvas = document.getElementById('particle-canvas');
+const ctx    = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor(x, y) {
+    this.x = x; this.y = y;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 2.5 + Math.random() * 5.5;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed - 2;
+    this.life  = 1;
+    this.decay = 0.016 + Math.random() * 0.02;
+    this.size  = 2 + Math.random() * 5;
+    this.shape = Math.random() < 0.4 ? 'star' : 'circle';
+    const hue = 35 + Math.random() * 20;
+    const sat = 80 + Math.random() * 20;
+    const lit = 55 + Math.random() * 30;
+    this.color = `hsl(${hue},${sat}%,${lit}%)`;
+  }
+  update() {
+    this.x  += this.vx;
+    this.y  += this.vy;
+    this.vy += 0.12;
+    this.vx *= 0.98;
+    this.life -= this.decay;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.life);
+    ctx.fillStyle   = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur  = 8;
+    if (this.shape === 'star') {
+      drawStar(ctx, this.x, this.y, 5, this.size, this.size * 0.45);
+    } else {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function drawStar(ctx, cx, cy, spikes, outerR, innerR) {
+  let rot = (Math.PI / 2) * 3;
+  const step = Math.PI / spikes;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - outerR);
+  for (let i = 0; i < spikes; i++) {
+    ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR);
+    rot += step;
+    ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR);
+    rot += step;
+  }
+  ctx.lineTo(cx, cy - outerR);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function burst(x, y, count = 60) {
+  for (let i = 0; i < count; i++) particles.push(new Particle(x, y));
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles = particles.filter(p => p.life > 0);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+/* ═══════════════════════════════════════
+   CURSOR ANIMATION
+═══════════════════════════════════════ */
+const cursorEl = document.getElementById('cursor');
+let cursorX = window.innerWidth * 0.5;
+let cursorY = window.innerHeight * 0.5;
+
+function moveCursorTo(x, y, duration, cb) {
+  const startX = cursorX, startY = cursorY;
+  const start  = performance.now();
+  function step(now) {
+    const t    = Math.min((now - start) / duration, 1);
+    const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+    cursorX = startX + (x - startX) * ease;
+    cursorY = startY + (y - startY) * ease;
+    cursorEl.style.left = cursorX + 'px';
+    cursorEl.style.top  = cursorY + 'px';
+    if (t < 1) requestAnimationFrame(step);
+    else if (cb) cb();
+  }
+  requestAnimationFrame(step);
+}
+
+/* ═══════════════════════════════════════
+   QUESTIONS DATA
+═══════════════════════════════════════ */
+const QUESTIONS = [
+  {
+    text: `Selon l'<em>Acte uniforme OHADA</em> sur le droit commercial général, le registre du commerce et du crédit mobilier (RCCM) est tenu par :`,
+    answers: [
+      "Le Ministère de la Justice de chaque État partie",
+      "La Cour Commune de Justice et d'Arbitrage (CCJA)",
+      "Le greffe du tribunal compétent ou l'organe désigné",
+      "La Chambre de commerce de l'État membre concerné",
+    ],
+    correct: 2, qNum: "03"
+  },
+  {
+    text: `En droit <em>OHADA</em>, la Société à Responsabilité Limitée (SARL) peut être constituée par :`,
+    answers: [
+      "Un minimum de sept (7) associés fondateurs",
+      "Un ou plusieurs associés, personnes physiques ou morales",
+      "Exclusivement des personnes morales agréées",
+      "Au moins deux actionnaires et un commissaire aux comptes",
+    ],
+    correct: 1, qNum: "04"
+  },
+  {
+    text: `L'<em>Acte uniforme</em> portant organisation des procédures collectives s'applique aux :`,
+    answers: [
+      "Seules personnes physiques commerçantes insolvables",
+      "Entreprises étatiques uniquement",
+      "Commerçants, personnes physiques et morales, et toute entité d'affaires",
+      "Personnes morales ayant leur siège hors de l'espace OHADA",
+    ],
+    correct: 2, qNum: "05"
+  },
+];
+
+/* ═══════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════ */
+const badge        = document.getElementById('validation-badge');
+const progressFill = document.getElementById('progress-fill');
+const progressLabel= document.getElementById('progress-label');
+const dots         = document.querySelectorAll('.dot');
+let currentQ = 0;
+let animating = false;
+
+function resetOptions() {
+  document.querySelectorAll('.option').forEach(el =>
+    el.classList.remove('correct', 'wrong', 'hovered'));
+}
+
+function updateDots(idx) {
+  dots.forEach((d,i) => d.classList.toggle('active', i === idx));
+}
+
+function setProgress(num, total = 10) {
+  progressFill.style.width = (num / total * 100) + '%';
+  progressLabel.textContent = `${num} / ${total}`;
+}
+
+function loadQuestion(qIdx) {
+  const q    = QUESTIONS[qIdx % QUESTIONS.length];
+  const qText= document.getElementById('question-text');
+  const opts = document.querySelectorAll('.option');
+  qText.innerHTML = q.text;
+  q.answers.forEach((ans, i) => {
+    opts[i].querySelector('.option-text').textContent = ans;
+    opts[i].dataset.correct = (i === q.correct).toString();
+    opts[i].querySelector('.option-letter').textContent = ['A','B','C','D'][i];
+  });
+  document.querySelector('.card-number').textContent = `Q ${q.qNum} / 10`;
+  setProgress(parseInt(q.qNum) - 1);
+  updateDots(qIdx % 3);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ── Wait for TTS to finish, with a safety timeout ── */
+function waitForSpeech(maxMs = 18000) {
+  return new Promise(resolve => {
+    const timer = setTimeout(resolve, maxMs);
+    const check = setInterval(() => {
+      if (!window.speechSynthesis.speaking) {
+        clearInterval(check); clearTimeout(timer); resolve();
+      }
+    }, 150);
+  });
+}
+
+/* ═══════════════════════════════════════
+   ANIMATION LOOP
+═══════════════════════════════════════ */
+async function runCycle() {
+  if (animating) return;
+  animating = true;
+
+  const q    = QUESTIONS[currentQ % QUESTIONS.length];
+  const opts = document.querySelectorAll('.option');
+
+  // ── 🔊 TTS: Announce question number + text + options ──
+  // Run TTS in parallel with the cursor entrance animation
+  TTS.announceQuestion(q); // non-blocking start
+
+  // Wrong option to hover first
+  const wrongIdx = q.correct === 0 ? 1 : 0;
+  const wrongEl  = opts[wrongIdx];
+  const wrongRect= wrongEl.getBoundingClientRect();
+
+  // Start cursor off-screen
+  cursorX = window.innerWidth  * 0.1;
+  cursorY = window.innerHeight * 0.88;
+  cursorEl.style.left = cursorX + 'px';
+  cursorEl.style.top  = cursorY + 'px';
+
+  await sleep(500);
+
+  // Hover wrong option
+  await new Promise(res => moveCursorTo(
+    wrongRect.left + wrongRect.width  * 0.5,
+    wrongRect.top  + wrongRect.height * 0.5, 900, res));
+  wrongEl.classList.add('hovered');
+  await sleep(700);
+  wrongEl.classList.remove('hovered');
+
+  // Move to correct option
+  const correctEl  = opts[q.correct];
+  const correctRect= correctEl.getBoundingClientRect();
+  const clickX     = correctRect.left + correctRect.width  * 0.5;
+  const clickY     = correctRect.top  + correctRect.height * 0.5;
+
+  await new Promise(res => moveCursorTo(clickX, clickY, 1100, res));
+  correctEl.classList.add('hovered');
+  await sleep(500);
+
+  // Click animation
+  cursorEl.style.transform = 'translate(-50%,-50%) scale(0.8)';
+  setTimeout(() => { cursorEl.style.transform = 'translate(-50%,-50%) scale(1)'; }, 120);
+
+  // Mark answers
+  correctEl.classList.remove('hovered');
+  correctEl.classList.add('correct');
+  opts.forEach((o, i) => { if (i !== q.correct) o.classList.add('wrong'); });
+
+  // Particle burst
+  burst(clickX, clickY, 70);
+  setTimeout(() => burst(clickX + 30, clickY - 20, 30), 120);
+  setTimeout(() => burst(clickX - 25, clickY + 15, 30), 200);
+
+  // Show badge
+  await sleep(300);
+  badge.classList.add('visible');
+  setProgress(parseInt(q.qNum));
+
+  // ── 🔊 TTS: Announce "Bonne réponse !" ──
+  TTS.stop(); // cancel option reading if still going
+  await sleep(200);
+  await TTS.announceResult(true);
+
+  // Hold (wait for TTS to finish, then extra pause)
+  await waitForSpeech(5000);
+  await sleep(900);
+
+  // Hide badge + reset
+  badge.classList.remove('visible');
+  await sleep(400);
+  resetOptions();
+  await sleep(300);
+
+  // Fade out card
+  const cardEl = document.getElementById('mcq-card');
+  cardEl.style.opacity   = '0';
+  cardEl.style.transform = 'translateX(-20px)';
+  await sleep(400);
+
+  // Load next question
+  currentQ++;
+  loadQuestion(currentQ);
+
+  // Fade in card
+  cardEl.style.transform = 'translateX(20px)';
+  await sleep(50);
+  cardEl.style.opacity   = '1';
+  cardEl.style.transform = 'translateX(0)';
+  await sleep(400);
+
+  animating = false;
+  setTimeout(runCycle, 800);
+}
+
+/* ═══════════════════════════════════════
+   PARALLAX ON MOUSE MOVE
+═══════════════════════════════════════ */
+let parallaxActive = true;
+document.addEventListener('mousemove', e => {
+  if (!parallaxActive) return;
+  const cx = window.innerWidth  / 2;
+  const cy = window.innerHeight / 2;
+  const dx = (e.clientX - cx) / cx;
+  const dy = (e.clientY - cy) / cy;
+  const wrapper = document.getElementById('card-wrapper');
+  // Only override float during mouse move (subtle)
+  wrapper.style.transform = `translate(${dx * 14}px, ${dy * 8}px)`;
+});
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+loadQuestion(0);
+cursorEl.style.left = window.innerWidth  * 0.5 + 'px';
+cursorEl.style.top  = window.innerHeight * 0.85 + 'px';
+setTimeout(() => { setProgress(2); }, 600);
+setTimeout(runCycle, 1200);
+</script>
+</body>
+</html>
