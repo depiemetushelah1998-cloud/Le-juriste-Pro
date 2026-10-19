@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -127,89 +127,90 @@
     <!-- Conteneur Principal -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-3 md:p-4 grid grid-cols-1 gap-4">
 
-        <!-- Bannière d'en-tête & Gratuité Absolue -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 border border-amber-500/30 p-6 md:p-8 text-white shadow-2xl">
-            <div class="absolute -right-8 -bottom-10 opacity-10 pointer-events-none">
-                <i class="fa-solid fa-scale-unbalanced-flip text-[220px] text-amber-400"></i>
-            </div>
-
-            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div class="space-y-3 max-w-3xl">
-                    <div class="inline-flex items-center space-x-2 bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 rounded-full text-xs font-bold text-emerald-300">
-                        <i class="fa-solid fa-lock-open text-emerald-400"></i>
-                        <span>APPLICATION 100% GRATUITE • AUCUN ABONNEMENT • ZÉRO PAYWALL</span>
-                    </div>
-                    <h2 class="text-2xl md:text-3xl font-extrabold font-serif-title text-slate-100">
-                        Le Juriste Pro — <span class="gold-gradient-text">Excellence & Démocratisation Juridique</span>
-                    </h2>
-                    <p class="text-xs md:text-sm text-slate-300 leading-relaxed">
-                        Plateforme dédiée à la préparation rigoureuse de la phase de présélection au concours de la magistrature en Côte d'Ivoire (INFJ) et au renforcement de la culture juridique. Paliers progressifs de 50 QCM, compte à rebours réflexe de 45 secondes et explications juridiques détaillées fondées sur les textes en vigueur.
-                    </p>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto self-end md:self-center">
-                    <button onclick="openModal('modal-donate')" class="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-extrabold text-xs px-5 py-3 rounded-2xl shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 whitespace-nowrap">
-                        <i class="fa-solid fa-hand-holding-dollar text-slate-950 text-base"></i>
-                        <span>Soutenir le Projet (Don Libre)</span>
-                    </button>
-                    <a href="https://wa.me/2250757846227" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-3 rounded-2xl transition flex items-center justify-center space-x-2 whitespace-nowrap shadow-md">
-                        <i class="fa-brands fa-whatsapp text-base"></i>
-                        <span>Échanger sur WhatsApp</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== SECTION 3 PUBLICS CIBLES ==================== -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
-                <div class="space-y-2">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg font-bold">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Étudiants aux Ressources Limitées</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">
-                        Conçu pour celles et ceux qui n'ont pas les moyens financiers d'intégrer des prépas privées coûteuses. Accédez à une préparation d'élite <strong>100% libre et gratuite</strong>.
-                    </p>
-                </div>
-                <span class="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
-                    <i class="fa-solid fa-check"></i> Égalité des chances
-                </span>
-            </div>
-
-            <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
-                <div class="space-y-2">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold">
-                        <i class="fa-solid fa-briefcase"></i>
-                    </div>
-                    <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Travailleurs & Professionnels</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">
-                        Pour les professionnels en activité aux contraintes horaires fortes. Entraînez-vous à votre rythme, en soirée ou le week-end, par paliers modulables de 50 QCM.
-                    </p>
-                </div>
-                <span class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
-                    <i class="fa-solid fa-clock"></i> Flexibilité totale 24h/24
-                </span>
-            </div>
-
-            <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
-                <div class="space-y-2">
-                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg font-bold">
-                        <i class="fa-solid fa-scale-unbalanced"></i>
-                    </div>
-                    <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Étudiants en Droit (L1 à M2)</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">
-                        Pour tous les juristes universitaires désireux d'évaluer leurs réflexes, de réviser leurs cours fondamentaux et de consolider une culture juridique solide.
-                    </p>
-                </div>
-                <span class="text-[11px] font-bold text-indigo-300 flex items-center gap-1">
-                    <i class="fa-solid fa-brain"></i> Culture juridique d'excellence
-                </span>
-            </div>
-        </section>
-
         <!-- ==================== ÉCRAN 1 : DASHBOARD ==================== -->
         <section id="screen-dashboard" class="space-y-6">
+
+            <!-- Bannière d'en-tête & Gratuité Absolue -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 border border-amber-500/30 p-6 md:p-8 text-white shadow-2xl">
+                <div class="absolute -right-8 -bottom-10 opacity-10 pointer-events-none">
+                    <i class="fa-solid fa-scale-unbalanced-flip text-[220px] text-amber-400"></i>
+                </div>
+
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div class="space-y-3 max-w-3xl">
+                        <div class="inline-flex items-center space-x-2 bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 rounded-full text-xs font-bold text-emerald-300">
+                            <i class="fa-solid fa-lock-open text-emerald-400"></i>
+                            <span>APPLICATION 100% GRATUITE • AUCUN ABONNEMENT • ZÉRO PAYWALL</span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-extrabold font-serif-title text-slate-100">
+                            Le Juriste Pro — <span class="gold-gradient-text">Excellence & Démocratisation Juridique</span>
+                        </h2>
+                        <p class="text-xs md:text-sm text-slate-300 leading-relaxed">
+                            Plateforme dédiée à la préparation rigoureuse de la phase de présélection au concours de la magistrature en Côte d'Ivoire (INFJ) et au renforcement de la culture juridique. Paliers progressifs de 50 QCM, compte à rebours réflexe de 45 secondes et explications juridiques détaillées fondées sur les textes en vigueur.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto self-end md:self-center">
+                        <button onclick="openModal('modal-donate')" class="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-extrabold text-xs px-5 py-3 rounded-2xl shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 whitespace-nowrap">
+                            <i class="fa-solid fa-hand-holding-dollar text-slate-950 text-base"></i>
+                            <span>Soutenir le Projet (Don Libre)</span>
+                        </button>
+                        <a href="https://wa.me/2250757846227" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-3 rounded-2xl transition flex items-center justify-center space-x-2 whitespace-nowrap shadow-md">
+                            <i class="fa-brands fa-whatsapp text-base"></i>
+                            <span>Échanger sur WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== SECTION 3 PUBLICS CIBLES ==================== -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
+                    <div class="space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Étudiants aux Ressources Limitées</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Conçu pour celles et ceux qui n'ont pas les moyens financiers d'intégrer des prépas privées coûteuses. Accédez à une préparation d'élite <strong>100% libre et gratuite</strong>.
+                        </p>
+                    </div>
+                    <span class="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
+                        <i class="fa-solid fa-check"></i> Égalité des chances
+                    </span>
+                </div>
+
+                <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
+                    <div class="space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Travailleurs & Professionnels</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Pour les professionnels en activité aux contraintes horaires fortes. Entraînez-vous à votre rythme, en soirée ou le week-end, par paliers modulables de 50 QCM.
+                        </p>
+                    </div>
+                    <span class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
+                        <i class="fa-solid fa-clock"></i> Flexibilité totale 24h/24
+                    </span>
+                </div>
+
+                <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col justify-between space-y-3">
+                    <div class="space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-scale-unbalanced"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm md:text-base font-serif-title">Étudiants en Droit (L1 à M2)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Pour tous les juristes universitaires désireux d'évaluer leurs réflexes, de réviser leurs cours fondamentaux et de consolider une culture juridique solide.
+                        </p>
+                    </div>
+                    <span class="text-[11px] font-bold text-indigo-300 flex items-center gap-1">
+                        <i class="fa-solid fa-brain"></i> Culture juridique d'excellence
+                    </span>
+                </div>
+            </div>
+
 
             <!-- Rappel non-intrusif : Soutenir le projet libre & gratuit -->
             <div id="banner-support-reminder" class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-amber-950/20 to-slate-900 border border-amber-500/30 p-3.5 sm:p-4 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-3.5">
@@ -309,8 +310,8 @@
                 <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 flex items-center space-x-3 shadow-md">
                     <div class="p-3 bg-amber-500/20 text-amber-400 rounded-xl border border-amber-500/30"><i class="fa-solid fa-gavel text-xl"></i></div>
                     <div>
-                        <div class="text-2xl font-black text-white">6</div>
-                        <div class="text-xs text-slate-400 font-medium">Matières Clés</div>
+                        <div class="text-2xl font-black text-white" id="stat-modules-count">9</div>
+                        <div class="text-xs text-slate-400 font-medium">Matières Officielles</div>
                     </div>
                 </div>
                 <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 flex items-center space-x-3 shadow-md">

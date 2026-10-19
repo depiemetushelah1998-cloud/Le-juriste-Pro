@@ -426,15 +426,19 @@ const QUESTIONS_DATABASE = [
   }
 ];
 
-// Configuration des matières officielles
+// Configuration des matières officielles (Toutes les matières du concours & de la formation)
 const MODULES_DATA = [
-  { id: "CIV", name: "Droit Civil & Personnes", quota: 4500, color: "bg-blue-500", icon: "fa-book" },
-  { id: "PEN", name: "Droit Pénal Général & Spécial", quota: 4000, color: "bg-red-500", icon: "fa-gavel" },
-  { id: "OHA", name: "Droit Commercial / OHADA", quota: 3500, color: "bg-amber-500", icon: "fa-briefcase" },
-  { id: "ORG", name: "Organisation & Système Judiciaire Ivoirien", quota: 3000, color: "bg-emerald-500", icon: "fa-building-columns" },
-  { id: "ADM", name: "Droit Administratif & Contentieux", quota: 3000, color: "bg-purple-500", icon: "fa-scale-balanced" },
-  { id: "NUM", name: "Culture Numérique & E-Justice", quota: 2000, color: "bg-cyan-500", icon: "fa-laptop-code" }
+  { id: "CIV", name: "Droit Civil, Obligations & Personnes", quota: 4500, color: "bg-blue-600", icon: "fa-book" },
+  { id: "PEN", name: "Droit Pénal Général & Spécial", quota: 4000, color: "bg-red-600", icon: "fa-gavel" },
+  { id: "PRC", name: "Procédure Pénale & Procédure Civile", quota: 3500, color: "bg-teal-600", icon: "fa-scale-unbalanced-flip" },
+  { id: "OHA", name: "Droit Commercial & Actes Uniformes OHADA", quota: 3500, color: "bg-amber-600", icon: "fa-briefcase" },
+  { id: "ORG", name: "Organisation & Système Judiciaire Ivoirien", quota: 3000, color: "bg-emerald-600", icon: "fa-building-columns" },
+  { id: "ADM", name: "Droit Administratif & Contentieux Public", quota: 3000, color: "bg-purple-600", icon: "fa-scale-balanced" },
+  { id: "INF", name: "Informatique, Bureautique & TIC", quota: 2500, color: "bg-indigo-600", icon: "fa-microchip" },
+  { id: "CUL", name: "Culture Générale, Histoire & Relations Internationales", quota: 2500, color: "bg-rose-600", icon: "fa-globe" },
+  { id: "NUM", name: "Culture Numérique & E-Justice", quota: 2000, color: "bg-cyan-600", icon: "fa-laptop-code" }
 ];
+
 
 // Bibliothèque de Fiches de Synthèse Gratuites
 const FICHES_SYNTHESE = [

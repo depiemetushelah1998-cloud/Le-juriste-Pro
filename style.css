@@ -23,7 +23,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth retiré — provoquait un défilement animé parasite lors de la navigation entre écrans */
+  scroll-behavior: auto;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   color: #f8fafc;
   background-color: #0b0f19;
@@ -261,6 +262,20 @@ button:active, a:active {
   z-index: 9999;
   transition: width 0.28s var(--ease-spring), opacity 0.3s var(--ease-gentle);
   pointer-events: none;
+}
+
+/* ── Timer d'urgence : rouge pulsant quand ≤ 10 secondes ── */
+#quiz-timer {
+  transition: border-color 0.3s var(--ease-gentle), color 0.3s var(--ease-gentle);
+}
+
+@keyframes timerUrgencePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  50%       { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.25); }
+}
+
+#quiz-timer.\!border-red-500 {
+  animation: timerUrgencePulse 0.8s ease-in-out infinite;
 }
 
 /* Pulsation douce */

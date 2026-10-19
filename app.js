@@ -57,9 +57,12 @@ const FREE_QUESTIONS_LIMIT  = 5;    // Questions gratuites avant paywall
 let userModuleLevels = {
   CIV: 1,
   PEN: 1,
+  PRC: 1,
   OHA: 1,
   ORG: 1,
   ADM: 1,
+  INF: 1,
+  CUL: 1,
   NUM: 1
 };
 
@@ -570,6 +573,38 @@ function showPaywallModal(titre, message) {
   modal.classList.remove('hidden');
 }
 
+// ---------------------------------------------------------------------
+// Modal de soutien volontaire (don)
+function showDonationModal(titre, message) {
+  // Réutiliser ou créer la modale de don
+  let modal = document.getElementById('modal-donation');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modal-donation';
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm';
+    modal.innerHTML = `
+      <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-8 max-w-sm w-full mx-4 shadow-2xl text-center animate-fade-in">
+        <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-3xl text-emerald-400">
+          <i class="fa-solid fa-heart"></i>
+        </div>
+        <h2 class="text-xl font-bold font-serif-title text-emerald-300 mb-2" id="donation-title"></h2>
+        <p class="text-sm text-slate-300 leading-relaxed mb-6" id="donation-message"></p>
+        <!-- Bouton de don (exemple PayPal) -->
+        <a href="https://www.paypal.com/donate" target="_blank" class="inline-block w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3.5 rounded-2xl transition mb-3 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+          Faire un don volontaire
+        </a>
+        <button onclick="closeModal('modal-donation')" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 rounded">Fermer</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('donation-title').innerText = titre;
+  document.getElementById('donation-message').innerHTML = message;
+  modal.classList.remove('hidden');
+}
+
+
 function updateStatsDisplay() {
   const statBox = document.getElementById("stat-answered-display");
   if (statBox) {
@@ -905,68 +940,77 @@ function createSyntheticVariation(subjectId, moduleName, level, qNum, index) {
   };
 }
 
-// Animation de chargement discrète et moderne (Slow in & Slow out)
+// Animation de chargement discrète et moderne — exécution synchrone immédiate
 function triggerLoaderAnimation(callback) {
+  // Exécution immédiate du callback pour navigation instantanée sans délai
+  if (callback) callback();
+
+  // Animation de barre discrète en arrière-plan (purement cosmétique, ne bloque pas la navigation)
   const bar = document.getElementById("global-progress-bar");
-  if (!bar) {
-    if (callback) callback();
-    return;
-  }
-
+  if (!bar) return;
   bar.style.opacity = "1";
-  bar.style.width = "25%";
-
-  setTimeout(() => {
-    bar.style.width = "75%";
-  }, 100);
-
+  bar.style.width = "60%";
   setTimeout(() => {
     bar.style.width = "100%";
-    if (callback) callback();
     setTimeout(() => {
       bar.style.opacity = "0";
-      setTimeout(() => {
-        bar.style.width = "0%";
-      }, 250);
-    }, 180);
-  }, 220);
+      setTimeout(() => { bar.style.width = "0%"; }, 200);
+    }, 150);
+  }, 80);
 }
 
-// Navigation & Écrans avec Transitions Fluides Naturelles
+// Navigation & Écrans — Transition instantanée et fluide sans défilement ni délai
+let _navLock = false; // Verrou anti-double-clic
+
 function switchTab(screen) {
-  triggerLoaderAnimation(() => {
-    const screens = ["dashboard", "quiz", "fiches", "codes", "community", "author"];
-    screens.forEach(s => {
-      const el = document.getElementById(`screen-${s}`);
-      if (el) {
-        el.classList.add("hidden");
-        el.classList.remove("screen-animate");
-      }
-    });
+  // Masquer tous les écrans immédiatement
+  const screens = ["dashboard", "quiz", "fiches", "codes", "community", "author"];
+  screens.forEach(s => {
+    const el = document.getElementById(`screen-${s}`);
+    if (el) {
+      el.classList.add("hidden");
+      el.classList.remove("screen-animate");
+    }
+  });
 
-    const modalSummary = document.getElementById("modal-summary");
-    if (modalSummary) modalSummary.classList.add("hidden");
+  // Masquer la modale bilan si ouverte
+  const modalSummary = document.getElementById("modal-summary");
+  if (modalSummary) modalSummary.classList.add("hidden");
 
-    stopTimers();
+  // Arrêter les timers actifs
+  stopTimers();
 
-    const target = document.getElementById(`screen-${screen}`);
-    if (target) {
-      target.classList.remove("hidden");
-      // Déclencher la transition d'apparition douce
-      void target.offsetWidth; // Reflow pour redémarrer l'animation
-      target.classList.add("screen-animate");
-    } else {
-      const dash = document.getElementById("screen-dashboard");
+  // Afficher l'écran cible (ou le dashboard par défaut)
+  const target = document.getElementById(`screen-${screen}`);
+  if (target) {
+    target.classList.remove("hidden");
+    void target.offsetWidth; // Reflow pour redémarrer l'animation CSS
+    target.classList.add("screen-animate");
+  } else {
+    // Écran inconnu → retour dashboard
+    const dash = document.getElementById("screen-dashboard");
+    if (dash) {
       dash.classList.remove("hidden");
       dash.classList.add("screen-animate");
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  }
+
+  // Scroll instantané vers le haut (pas de défilement animé perturbant)
+  window.scrollTo(0, 0);
+
+  // Lancer l'animation de barre de progression en arrière-plan
+  triggerLoaderAnimation(null);
 }
 
 function stopTimers() {
-  if (examTimerInterval) clearInterval(examTimerInterval);
-  if (questionTimerInterval) clearInterval(questionTimerInterval);
+  if (examTimerInterval) {
+    clearInterval(examTimerInterval);
+    examTimerInterval = null;
+  }
+  if (questionTimerInterval) {
+    clearInterval(questionTimerInterval);
+    questionTimerInterval = null;
+  }
   stopVoiceAudio();
 }
 
@@ -1019,12 +1063,16 @@ function startSubjectTraining(subjectId) {
   }
 
   const moduleObj = MODULES_DATA.find(m => m.id === subjectId);
-  document.getElementById("quiz-module-badge").innerText = moduleObj ? moduleObj.name : subjectId;
+  const moduleBadge = document.getElementById("quiz-module-badge");
+  if (moduleBadge) moduleBadge.innerText = moduleObj ? moduleObj.name : subjectId;
   const levelBadge = document.getElementById("quiz-level-badge");
-  const resumedText = activeQuestionIndex > 0 ? ` (Reprise QCM ${activeQuestionIndex + 1})` : "";
-  levelBadge.innerText = `Niveau ${currentLevel}${resumedText} (50 QCM)`;
-  levelBadge.classList.remove("hidden");
+  if (levelBadge) {
+    const resumedText = activeQuestionIndex > 0 ? ` (Reprise QCM ${activeQuestionIndex + 1})` : "";
+    levelBadge.innerText = `Niveau ${currentLevel}${resumedText} (50 QCM)`;
+    levelBadge.classList.remove("hidden");
+  }
 
+  // Naviguer vers l'écran quiz PUIS charger la question (ordre garanti)
   switchTab("quiz");
   loadQuestion();
 }
@@ -1044,8 +1092,10 @@ function startTraining() {
   currentQuestions = generatedMix.sort(() => 0.5 - Math.random());
   activeQuestionIndex = 0;
 
-  document.getElementById("quiz-module-badge").innerText = "Entraînement Mixte";
-  document.getElementById("quiz-level-badge").classList.add("hidden");
+  const moduleBadge = document.getElementById("quiz-module-badge");
+  if (moduleBadge) moduleBadge.innerText = "Entraînement Mixte";
+  const levelBadge = document.getElementById("quiz-level-badge");
+  if (levelBadge) levelBadge.classList.add("hidden");
 
   switchTab("quiz");
   loadQuestion();
@@ -1066,94 +1116,173 @@ function startExam() {
   currentQuestions = examQuestions.sort(() => 0.5 - Math.random()).slice(0, 100);
   activeQuestionIndex = 0;
 
-  document.getElementById("quiz-module-badge").innerText = "Examen Blanc Officiel (100 QCM)";
-  document.getElementById("quiz-level-badge").classList.add("hidden");
+  const moduleBadge = document.getElementById("quiz-module-badge");
+  if (moduleBadge) moduleBadge.innerText = "Examen Blanc Officiel (100 QCM)";
+  const levelBadge = document.getElementById("quiz-level-badge");
+  if (levelBadge) levelBadge.classList.add("hidden");
 
-  startExamTimer(2 * 60 * 60); // 2 heures
   switchTab("quiz");
+  startExamTimer(2 * 60 * 60); // 2 heures
   loadQuestion();
 }
 
 function startExamTimer(seconds) {
+  // S'assurer que tout timer précédent est stoppé et nullifié
+  if (examTimerInterval) {
+    clearInterval(examTimerInterval);
+    examTimerInterval = null;
+  }
+
   let remaining = seconds;
-  const display = document.getElementById("timer-display");
-  stopTimers();
 
   examTimerInterval = setInterval(() => {
-    const hrs = Math.floor(remaining / 3600);
-    const mins = Math.floor((remaining % 3600) / 60);
-    const secs = remaining % 60;
-    if (display) {
-      display.innerText = `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-    }
-    if (--remaining < 0) {
+    if (remaining <= 0) {
       clearInterval(examTimerInterval);
+      examTimerInterval = null;
       alert("Le temps imparti pour l'Examen Blanc (2h00) est écoulé !");
       finishSession();
+      return;
+    }
+
+    remaining--;
+
+    const hrs  = Math.floor(remaining / 3600);
+    const mins = Math.floor((remaining % 3600) / 60);
+    const secs = remaining % 60;
+
+    // Lecture directe à chaque tick (pas de capture hors callback)
+    const display = document.getElementById("timer-display");
+    if (display) {
+      display.innerText = `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
     }
   }, 1000);
 }
 
 function startPerQuestionTimer() {
+  // Annuler tout timer précédent et nullifier la référence
+  if (questionTimerInterval) {
+    clearInterval(questionTimerInterval);
+    questionTimerInterval = null;
+  }
+
+  const timerBox = document.getElementById("quiz-timer");
+
   if (isExamMode || perQuestionTimerLimit <= 0) {
-    if (!isExamMode) {
-      document.getElementById("quiz-timer").classList.add("hidden");
-    }
+    if (!isExamMode && timerBox) timerBox.classList.add("hidden");
     return;
   }
 
-  document.getElementById("quiz-timer").classList.remove("hidden");
+  if (timerBox) timerBox.classList.remove("hidden");
+
+  // Initialiser le temps restant
   perQuestionTimeRemaining = perQuestionTimerLimit;
+
+  // Affichage initial immédiat
   const display = document.getElementById("timer-display");
   if (display) display.innerText = `${perQuestionTimeRemaining}s`;
+  if (timerBox) timerBox.classList.remove("border-red-500", "animate-pulse");
 
-  if (questionTimerInterval) clearInterval(questionTimerInterval);
+  // Capture de l'ID dans une variable locale pour éviter les conditions de course
+  const intervalId = setInterval(() => {
+    // Si cet intervalle a été remplacé, on l'arrête
+    if (questionTimerInterval !== intervalId) {
+      clearInterval(intervalId);
+      return;
+    }
 
-  questionTimerInterval = setInterval(() => {
     perQuestionTimeRemaining--;
-    if (display) display.innerText = `${perQuestionTimeRemaining}s`;
 
+    // Mise à jour de l'affichage
+    const disp = document.getElementById("timer-display");
+    if (disp) disp.innerText = `${perQuestionTimeRemaining}s`;
+
+    // Feedback visuel d'urgence : rouge clignotant quand ≤ 10 secondes
+    const tbox = document.getElementById("quiz-timer");
+    if (tbox) {
+      if (perQuestionTimeRemaining <= 10 && perQuestionTimeRemaining > 0) {
+        tbox.classList.add("!border-red-500", "!text-red-400");
+      } else {
+        tbox.classList.remove("!border-red-500", "!text-red-400");
+      }
+    }
+
+    // Temps écoulé : déclencher la validation automatique
     if (perQuestionTimeRemaining <= 0) {
-      clearInterval(questionTimerInterval);
+      clearInterval(intervalId);
+      questionTimerInterval = null;
+
+      // Réinitialiser le style d'urgence
+      if (tbox) tbox.classList.remove("!border-red-500", "!text-red-400");
+
+      // Sélectionner -1 si aucune option choisie (timeout)
       if (selectedOption === null) {
         selectedOption = -1;
       }
       validateAnswer(true);
     }
   }, 1000);
+
+  // Stocker l'ID dans la variable globale
+  questionTimerInterval = intervalId;
 }
 
 // Chargement de la question active
 function loadQuestion() {
-  if (questionTimerInterval) clearInterval(questionTimerInterval);
+  // Annuler le timer précédent immédiatement et proprement
+  if (questionTimerInterval) {
+    clearInterval(questionTimerInterval);
+    questionTimerInterval = null;
+  }
 
   const q = currentQuestions[activeQuestionIndex];
+  if (!q) return; // Sécurité : ne pas charger si questions vides
   selectedOption = null;
 
-  if (!isExamMode) {
-    document.getElementById("quiz-module-badge").innerText = q.module;
-  }
-  document.getElementById("quiz-subdomain").innerText = q.sous_domaine;
-  document.getElementById("quiz-question-text").innerText = q.question;
-  document.getElementById("current-q-num").innerText = activeQuestionIndex + 1;
-  document.getElementById("total-q-num").innerText = currentQuestions.length;
+  // Mise à jour des badges
+  const moduleBadge = document.getElementById("quiz-module-badge");
+  if (!isExamMode && moduleBadge) moduleBadge.innerText = q.module;
 
+  const subdomainEl = document.getElementById("quiz-subdomain");
+  if (subdomainEl) subdomainEl.innerText = q.sous_domaine;
+
+  const questionEl = document.getElementById("quiz-question-text");
+  if (questionEl) questionEl.innerText = q.question;
+
+  const currentQNum = document.getElementById("current-q-num");
+  if (currentQNum) currentQNum.innerText = activeQuestionIndex + 1;
+
+  const totalQNum = document.getElementById("total-q-num");
+  if (totalQNum) totalQNum.innerText = currentQuestions.length;
+
+  // Injecter les options
   const optionsContainer = document.getElementById("quiz-options-container");
-  optionsContainer.innerHTML = q.options.map((opt, idx) => `
-    <div onclick="selectOption(${idx})" id="opt-${idx}" class="qcm-option-card">
-      <span class="text-sm font-semibold">${opt}</span>
-      <div id="check-${idx}" class="check-indicator"></div>
-    </div>
-  `).join("");
+  if (optionsContainer) {
+    optionsContainer.innerHTML = q.options.map((opt, idx) => `
+      <div onclick="selectOption(${idx})" id="opt-${idx}" class="qcm-option-card">
+        <span class="text-sm font-semibold">${opt}</span>
+        <div id="check-${idx}" class="check-indicator"></div>
+      </div>
+    `).join("");
+  }
 
-  document.getElementById("correction-box").classList.add("hidden");
-  document.getElementById("btn-validate").classList.remove("hidden");
-  document.getElementById("btn-next").classList.add("hidden");
+  // Réinitialiser l'interface de réponse
+  const correctionBox = document.getElementById("correction-box");
+  if (correctionBox) correctionBox.classList.add("hidden");
 
+  const btnValidate = document.getElementById("btn-validate");
+  if (btnValidate) btnValidate.classList.remove("hidden");
+
+  const btnNext = document.getElementById("btn-next");
+  if (btnNext) btnNext.classList.add("hidden");
+
+  // Démarrer le timer par question (après mise à jour du DOM)
   startPerQuestionTimer();
 
-  // Déclenchement immédiat de l'interaction vocale optimisée (faible latence)
-  triggerVoiceCycleForQuestion(q);
+  // Déclenchement du cycle vocal avec requestAnimationFrame pour
+  // garantir que le DOM est peint avant la lecture (évite les conflits avec setInterval)
+  requestAnimationFrame(() => {
+    triggerVoiceCycleForQuestion(q);
+  });
 }
 
 
@@ -1176,12 +1305,24 @@ function selectOption(index) {
   });
 }
 
-// Validation de la réponse
+// Validation de la réponse (déclenchée par le clic de validation ou le chrono)
 function validateAnswer(isTimeout = false) {
-  if (questionTimerInterval) clearInterval(questionTimerInterval);
-
+  // 1. Vérifier qu'une option a été sélectionnée avant de valider (hors timeout)
   if (selectedOption === null && !isTimeout) {
     return alert("Veuillez sélectionner une option avant de valider votre réponse.");
+  }
+
+  // 2. Arrêt immédiat du minuteur/compteur dès que l'utilisateur valide son choix
+  if (questionTimerInterval) {
+    clearInterval(questionTimerInterval);
+    questionTimerInterval = null;
+  }
+  stopVoiceAudio();
+
+  // Figer et nettoyer l'affichage du minuteur
+  const timerBox = document.getElementById("quiz-timer");
+  if (timerBox) {
+    timerBox.classList.remove("!border-red-500", "!text-red-400", "animate-pulse");
   }
 
   const q = currentQuestions[activeQuestionIndex];
@@ -1239,20 +1380,18 @@ function validateAnswer(isTimeout = false) {
 
 // Question suivante — avec vérification paywall après la 5e question gratuite
 async function nextQuestion() {
-  // ── Paywall : bloquer à partir de la 6e question (activeQuestionIndex === 4) hors mode examen ──
-  if (activeQuestionIndex === FREE_QUESTIONS_LIMIT - 1 && !isExamMode) {
-    // Interrogation temps réel de la table profiles de Supabase
-    const isSubscribed = await isUserSubscribedAsync();
-    
-    if (!isSubscribed) {
-      showPaywallModal(
-        "Abonnement requis",
-        `Vous avez complété vos ${FREE_QUESTIONS_LIMIT} questions gratuites. ` +
-        `Pour poursuivre votre entraînement au-delà de la 5ème question, souscrivez à l'abonnement mensuel à ${MONTANT_MENSUEL.toLocaleString()} FCFA.`
-      );
-      return;
-    }
-  }
+// If we reach free question limit, propose a voluntary donation instead of blocking the quiz
+if (activeQuestionIndex === FREE_QUESTIONS_LIMIT - 1 && !isExamMode) {
+  // Show a friendly donation modal
+  showDonationModal(
+    "Merci de votre participation",
+    `Vous avez atteint les ${FREE_QUESTIONS_LIMIT} questions gratuites. ` +
+    "Si vous aimez Le Juriste Pro, pensez à faire un don volontaire pour soutenir le développement du projet. " +
+    "Votre soutien nous aide à maintenir et enrichir le contenu."
+  );
+  // No return – continue the quiz
+}
+
 
   if (activeQuestionIndex + 1 < currentQuestions.length) {
     activeQuestionIndex++;
@@ -1551,15 +1690,15 @@ function readCurrentQuestionSpeech() {
 
   const utterance = new SpeechSynthesisUtterance(textToRead);
   utterance.lang = "fr-FR";
-  utterance.rate = 1.1; // Vitesse légèrement accélérée demandée
-  utterance.pitch = 1.0; // Tonalité naturelle
+  utterance.rate  = 1.25; // ✦ Vitesse dynamique optimisée (1.25x)
+  utterance.pitch = 1.0;  // Tonalité naturelle
 
   if (synthVoiceInstance) {
     utterance.voice = synthVoiceInstance;
   }
 
   utterance.onstart = () => {
-    updateVoiceStatusBanner("Lecture vocale de la question en cours...");
+    updateVoiceStatusBanner("Lecture vocale en cours... ⚡ 1.25×");
   };
 
   utterance.onend = () => {
@@ -1571,7 +1710,8 @@ function readCurrentQuestionSpeech() {
     }
   };
 
-  utterance.onerror = () => {
+  utterance.onerror = (e) => {
+    console.warn("[TTS] Erreur synthèse vocale :", e.error);
     activeUtterance = null;
   };
 
@@ -1584,10 +1724,10 @@ function readCurrentQuestionSpeech() {
  */
 function triggerVoiceCycleForQuestion(q) {
   if (isVoiceSpeechActive) {
-    // Petit délai imperceptible de 120ms pour laisser le DOM s'afficher
-    setTimeout(() => {
-      readCurrentQuestionSpeech();
-    }, 120);
+    // Arrêter toute lecture précédente avant d'en démarrer une nouvelle
+    stopVoiceAudio();
+    // Lancer la lecture sans délai bloquant (requestAnimationFrame garantit le rendu DOM)
+    readCurrentQuestionSpeech();
   } else if (isVoiceListeningActive) {
     startSpeechRecognition();
   }
